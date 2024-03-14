@@ -1,0 +1,32 @@
+﻿@model ModelVueloClases
+@{
+    VueloView vuelo = await repo.FindVueloViewByIdAsync(Model.VueloView.IdVuelo);
+}
+
+@foreach (TipoClase clase in Model.Clases)
+{
+    decimal precio = Model.VueloView.PrecioEstandar;
+    @if (clase.IdTipoClase == 2)
+    {
+        decimal percentage = (decimal) 1.10;
+        precio= decimal.Multiply(precio,percentage);
+    }
+        precio = Math.Round(precio,2);
+    <div class="col-md-6">
+        <div class="card mb-4 rounded-3 shadow-sm">
+            <div class="card-header py-3 bg-primary text-white">
+                <h4 class="my-0 fw-normal">@clase.Nombre</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title pricing-card-title">@precio €</h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                    <p>Incluye:</p>
+                    <li>Equipaje de mano: @clase.EquipajeMano maleta</li>
+                    <li>Equipaje en cabina: @clase.EquipajeCabina</li>
+                </ul>
+                <input type="checkbox" class="btn-check btn btn-primary" value="">
+                <label class="btn btn-primary next-step" onclick="prueba(@clase.IdTipoClase)">Seleccionar</label>
+            </div>
+        </div>
+    </div>
+}

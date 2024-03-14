@@ -1,0 +1,480 @@
+﻿@model List<CiudadView>
+@{
+    ViewData["Title"] = "Home";
+    List<Continente> continentes = await repo.GetAllContinentesAsync();
+}
+@section Styles {
+    <link href="~/css/megamenu.css" rel="stylesheet" />
+}
+@section Scripts {
+    <script type="module">
+        import Autocomplete from "https://cdn.jsdelivr.net/gh/lekoala/bootstrap5-autocomplete@master/autocomplete.js";
+
+        const opts = {
+            onSelectItem: console.log,
+        };
+        Autocomplete.init("input.autocomplete", {
+            valueField: "id",
+            labelField: "title",
+            highlightTyped: true,
+            onSelectItem: console.log,
+        });
+        new Autocomplete(document.getElementById("floatingOrigen"), opts);
+        new Autocomplete(document.getElementById("floatingDestino"), opts);
+
+    </script>
+    <script>
+        // $(document).ready(function () {
+        $("span.seleccionDestino").each(function () {
+            $(this).click(function () {
+                $("#floatingDestino").val($(this).text());
+            })
+        });
+        $("span.seleccionOrigen").each(function () {
+            $(this).click(function () {
+                $("#floatingOrigen").val($(this).text());
+            })
+        })
+
+        $("#switchPlaces").click(function () {
+            let origen = $("#floatingOrigen").val();
+            let destino = $("#floatingDestino").val();
+
+            $("#floatingDestino").val(origen);
+            $("#floatingOrigen").val(destino);
+        })
+
+        $("#addAdulto").click(function () {
+            let valor = $("#adultos").val();
+            $("#adultos").val(parseInt($("#adultos").val()) + 1);
+            $("#totalAdults").text($("#adultos").val());
+        })
+        $("#reduceAdulto").click(function () {
+            let valor = $("#adultos").val();
+            if (valor > 1) {
+                $("#adultos").val(valor - 1);
+                $("#totalAdults").html($("#adultos").val());
+            }
+        })
+        $("#addKid").click(function () {
+            let valor = $("#kids").val();
+            $("#kids").val(parseInt($("#kids").val()) + 1);
+            $("#totalKids").text($("#kids").val());
+        })
+        $("#reduceKid").click(function () {
+            let valor = $("#kids").val();
+            if (valor > 0) {
+                $("#kids").val(valor - 1);
+                $("#totalKids").text(valor - 1);
+            }
+        })
+
+        $("#ida").change(function () {
+            if ($(this).is(":checked")) {
+                // Hacer algo cuando "Ida" está seleccionado
+                $("#containerVuelta").addClass("d-none");
+            }
+        });
+
+        // Cuando el radio "Ida y Vuelta" está seleccionado
+        $("#idaVuelta").change(function () {
+            if ($(this).is(":checked")) {
+                $("#containerVuelta").removeClass("d-none");
+            }
+        });
+        // });
+
+    </script>
+}
+
+<!-- Header Start -->
+<div class="container-fluid bg-breadcrumb">
+    <div class="container text-center py-5" style="max-width: 1300px;">
+        <form method="post" asp-action="Vuelos" asp-controller="Vuelos" class="form-search-flights bg-white p-3 rounded-1 row row-cols-lg-auto g-3 align-items-center justify-content-center">
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="viaje" id="ida" checked>
+                    <label class="form-check-label" for="ida">
+                        Ida
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="viaje" id="idaVuelta">
+                    <label class="form-check-label" for="idaVuelta">
+                        Ida y Vuelta
+                    </label>
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-row gap-2">
+                <div class="col-11">
+                    <div class="form-floating">
+                        <input type="text" name="origen" class="form-control" id="floatingOrigen" placeholder="Origen" data-datalist="list-paises">
+                        <label for="floatingInput">
+                            Origen <i class="fa-solid fa-location-dot"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-auto d-grid" style="place-content:center;">
+                    <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown dropdown-mega position-static">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+
+                            </a>
+                            <div class="dropdown-menu shadow">
+                                <div class="mega-content px-4">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-4 col-md-3 py-4">
+                                                @foreach (Continente continente in continentes)
+                                                {
+                                                    <ul>
+                                                        <li class="dropend">
+                                                            <a href="#" class="dropdown-item dropdown-toggle continenteName" data-bs-toggle="dropdown" data-bs-auto-close="default">@continente.Nombre</a>
+                                                            <ul class="dropdown-menu shadow dropdown-scroll">
+                                                                @foreach (CiudadView view in Model)
+                                                                {
+                                                                    @if (view.IdContinente == continente.IdContinente)
+                                                                    {
+
+                                                                        <li>
+                                                                            <span class="dropdown-item seleccionOrigen">@view.Nombre</span>
+                                                                        </li>
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                    </ul>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-12">
+                <button id="switchPlaces" type="button" class="btn btn-outline-primary rounded-circle">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+            </div>
+            <div class="col-12 d-flex flex-row gap-2">
+                <div class="col-11">
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="destino" id="floatingDestino" placeholder="Destino" data-datalist="list-paises">
+                        <label for="floatingDestino">
+                            Destino <i class="fa-solid fa-location-dot"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-auto d-grid" style="place-content:center;">
+                    <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown dropdown-mega position-static">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+
+                            </a>
+                            <div class="dropdown-menu shadow">
+                                <div class="mega-content px-4">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-4 col-md-3 py-4">
+                                                @foreach (Continente continente in continentes)
+                                                {
+                                                    <ul>
+                                                        <li class="dropend">
+                                                            <a href="#" class="dropdown-item dropdown-toggle continenteName" data-bs-toggle="dropdown" data-bs-auto-close="inside">@continente.Nombre</a>
+                                                            <ul class="dropdown-menu shadow dropdown-scroll">
+                                                                @foreach (CiudadView view in Model)
+                                                                {
+                                                                    @if (view.IdContinente == continente.IdContinente)
+                                                                    {
+
+                                                                        <li>
+                                                                            <span class="dropdown-item seleccionDestino">@view.Nombre</span>
+                                                                        </li>
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                    </ul>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            
+            <datalist id="list-paises">
+                @foreach (CiudadView ciudad in Model)
+                {
+                    <option value="@ciudad.IdCiudad">@ciudad.Nombre</option>
+                }
+            </datalist>
+            <div class="col-12">
+                <div class="form-floating">
+                    <input type="date" name="fechaIda" class="form-control" id="floatingFechaIda" placeholder="Fecha Ida">
+                    <label for="floatingInput">
+                        Fecha Ida <i class="fa-regular fa-calendar-days"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="d-none col-12" id="containerVuelta">
+                <div class="form-floating">
+                    <input type="date" name="fechaVuelta" class="form-control" id="floatingFechaVuelta" placeholder="Fecha Ida">
+                    <label for="floatingFechaVuelta">
+                        Fecha Vuelta <i class="fa-regular fa-calendar-days"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="col-12">
+                <input type="hidden" name="adultos" id="adultos" value="1" />
+                <input type="hidden" name="kids" id="kids" value="0" />
+                <div class="dropdown">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="false" aria-expanded="false">
+                        Pasajeros
+                    </button>
+                    <div class="dropdown-menu" style="width:200px;">
+                        <div class="m-3">
+                            <span class="fs-3 text-primary fw-bold" id="totalAdults">1</span>
+                            <span>Adulto</span>
+                            <button type="button" class="btn btn-outline-primary rounded-pill" id="addAdulto">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary rounded-pill" id="reduceAdulto">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </div>
+                        <div class="m-3">
+                            <span class="fs-3 text-primary fw-bold" id="totalKids">0</span>
+                            <span>Niños</span>
+                            <button type="button" class="btn btn-outline-primary rounded-pill" id="addKid">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-primary rounded-pill" id="reduceKid">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Buscar Vuelos</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Header End -->
+<!-- Explore Tour Start -->
+<div class="container-fluid ExploreTour py-5">
+    <div class="container py-5">
+        <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+            <h5 class="section-title px-3">Explore Tour</h5>
+            <h1 class="mb-4">The World</h1>
+            <p class="mb-0">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
+            </p>
+        </div>
+        <div class="tab-class text-center">
+            <ul class="nav nav-pills d-inline-flex justify-content-center mb-5">
+                <li class="nav-item">
+                    <a class="d-flex mx-3 py-2 border border-primary bg-light rounded-pill active" data-bs-toggle="pill" href="#NationalTab-1">
+                        <span class="text-dark" style="width: 250px;">National Tour Category</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="d-flex py-2 mx-3 border border-primary bg-light rounded-pill" data-bs-toggle="pill" href="#InternationalTab-2">
+                        <span class="text-dark" style="width: 250px;">International tour Category</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="NationalTab-1" class="tab-pane fade show p-0 active">
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-1.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Weekend Tour</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-2.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Holiday Tour</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-3.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Road Trip</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="tour-offer bg-info">15% Off</div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-4.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Historical Trip</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-5.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Family Tour</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="tour-offer bg-warning">50% Off</div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="national-item">
+                                <img src="img/explore-tour-6.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <div class="national-content">
+                                    <div class="national-info">
+                                        <h5 class="text-white text-uppercase mb-2">Beach Tour</h5>
+                                        <a href="#" class="btn-hover text-white">View All Place <i class="fa fa-arrow-right ms-2"></i></a>
+                                    </div>
+                                </div>
+                                <div class="national-plus-icon">
+                                    <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="InternationalTab-2" class="tab-pane fade show p-0">
+                    <div class="InternationalTour-carousel owl-carousel">
+                        <div class="international-item">
+                            <img src="img/explore-tour-1.jpg" class="img-fluid w-100 rounded" alt="Image">
+                            <div class="international-content">
+                                <div class="international-info">
+                                    <h5 class="text-white text-uppercase mb-2">Australia</h5>
+                                    <a href="#" class="btn-hover text-white me-4"><i class="fas fa-map-marker-alt me-1"></i> 8 Cities</a>
+                                    <a href="#" class="btn-hover text-white"><i class="fa fa-eye ms-2"></i> <span>143+ Tour Places</span></a>
+                                </div>
+                            </div>
+                            <div class="tour-offer bg-success">30% Off</div>
+                            <div class="international-plus-icon">
+                                <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                        <div class="international-item">
+                            <img src="img/explore-tour-2.jpg" class="img-fluid w-100 rounded" alt="Image">
+                            <div class="international-content">
+                                <div class="international-info">
+                                    <h5 class="text-white text-uppercase mb-2">Germany</h5>
+                                    <a href="#" class="btn-hover text-white me-4"><i class="fas fa-map-marker-alt me-1"></i> 12 Cities</a>
+                                    <a href="#" class="btn-hover text-white"><i class="fa fa-eye ms-2"></i> <span>21+ Tour Places</span></a>
+                                </div>
+                            </div>
+                            <div class="international-plus-icon">
+                                <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                        <div class="international-item">
+                            <img src="img/explore-tour-3.jpg" class="img-fluid w-100 rounded" alt="Image">
+                            <div class="international-content">
+                                <div class="tour-offer bg-warning">45% Off</div>
+                                <div class="international-info">
+                                    <h5 class="text-white text-uppercase mb-2">Spain</h5>
+                                    <a href="#" class="btn-hover text-white me-4"><i class="fas fa-map-marker-alt me-1"></i> 9 Cities</a>
+                                    <a href="#" class="btn-hover text-white"><i class="fa fa-eye ms-2"></i> <span>133+ Tour Places</span></a>
+                                </div>
+                            </div>
+                            <div class="international-plus-icon">
+                                <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                        <div class="international-item">
+                            <img src="img/explore-tour-4.jpg" class="img-fluid w-100 rounded" alt="Image">
+                            <div class="international-content">
+                                <div class="international-info">
+                                    <h5 class="text-white text-uppercase mb-2">Japan</h5>
+                                    <a href="#" class="btn-hover text-white me-4"><i class="fas fa-map-marker-alt me-1"></i> 8 Cities</a>
+                                    <a href="#" class="btn-hover text-white"><i class="fa fa-eye ms-2"></i> <span>137+ Tour Places</span></a>
+                                </div>
+                            </div>
+                            <div class="international-plus-icon">
+                                <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                        <div class="international-item">
+                            <img src="img/explore-tour-5.jpg" class="img-fluid w-100 rounded" alt="Image">
+                            <div class="international-content">
+                                <div class="tour-offer bg-info">70% Off</div>
+                                <div class="international-info">
+                                    <h5 class="text-white text-uppercase mb-2">London</h5>
+                                    <a href="#" class="btn-hover text-white me-4"><i class="fas fa-map-marker-alt me-1"></i> 17 Cities</a>
+                                    <a href="#" class="btn-hover text-white"><i class="fa fa-eye ms-2"></i> <span>26+ Tour Places</span></a>
+                                </div>
+                            </div>
+                            <div class="international-plus-icon">
+                                <a href="#" class="my-auto"><i class="fas fa-link fa-2x text-white"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Explore Tour Start -->
+<!-- Subscribe Start -->
+<div class="container-fluid subscribe py-5">
+    <div class="container text-center py-5">
+        <div class="mx-auto text-center" style="max-width: 900px;">
+            <h5 class="subscribe-title px-3">Subscribe</h5>
+            <h1 class="text-white mb-4">Our Newsletter</h1>
+            <p class="text-white mb-5">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
+            </p>
+            <div class="position-relative mx-auto">
+                <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
+                <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Subscribe End -->

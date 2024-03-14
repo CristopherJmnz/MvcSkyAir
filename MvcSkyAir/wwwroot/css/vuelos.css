@@ -1,0 +1,199 @@
+﻿:root {
+    --navy-blue: #0E2E7F;
+    --blue-secondary: #5676C6;
+}
+
+.card-logo img {
+    max-height: 80px;
+    transition: .5s;
+}
+
+.data{
+    width:fit-content;
+}
+
+.city {
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--navy-blue);
+}
+
+.hour {
+    font-weight: bold;
+    font-size: 2.8rem;
+    text-align: center;
+    color: var(--blue-secondary);
+    width: 100%;
+}
+
+
+.card-plane {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+
+.card-logo {
+    width: 200px;
+}
+
+.card-flight-body {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 100%;
+}
+
+.flight-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+@media(width<991px){
+    .city{
+        font-size:1rem;
+    }
+    .hour{
+        font-size:2rem;
+    }
+    .separator {
+        padding: 1rem !important;
+    }
+    .card-button {
+        padding: 15px 0;
+    }
+}
+
+@media(width<768px) {
+    .city {
+        font-size: 1rem;
+    }
+
+    .hour {
+        font-size: 1.6rem;
+    }
+    .flight-card{
+        flex-direction:column;
+    }
+    .card-button{
+        padding:15px 0;
+    }
+    .separator{
+        padding:.5rem !important;
+    }
+}
+
+@media(width<375px) {
+    .city {
+        font-size: .8rem;
+    }
+
+    .hour {
+        font-size: 1.3rem;
+    }
+
+    .separator {
+        padding: .1rem !important;
+    }
+    .card-plane span{
+        font-size:.6rem;
+    }
+}
+
+
+
+.progress-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+#progressbar {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    color: lightgrey;
+}
+
+    #progressbar li {
+        flex: 1;
+        text-align: center;
+        font-size: 15px;
+        font-weight: bold;
+        position: relative;
+    }
+
+        #progressbar li.active {
+            color: var(--blue-secondary);
+        }
+
+.progress {
+    height: 20px;
+    background-color: lightgray;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background-color: var(--blue-secondary);
+    width: 0;
+    height: 100%;
+    transition: width 0.4s ease-in-out;
+}
+
+.step-container fieldset {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+    display: none;
+}
+
+.step-container fieldset:first-of-type {
+    display: block;
+}
+
+h2 {
+    color: #2F8D46;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.next-step,
+.previous-step {
+    width: 100px;
+    font-weight: bold;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right;
+}
+
+
+.previous-step {
+    background: #616161;
+}
+
+
+.previous-step:hover,
+.previous-step:focus {
+    background-color: #4d4d4d;
+}
+
+.text {
+    color: #2F8D46;
+    font-weight: normal;
+}
+
+.finish {
+    text-align: center;
+}

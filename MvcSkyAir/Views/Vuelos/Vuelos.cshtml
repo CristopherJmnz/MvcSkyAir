@@ -1,0 +1,142 @@
+﻿@model List<VueloView>
+@{
+    Layout = "LayoutViajes";
+    ViewData["Title"] = "Vuelos";
+    List<TipoClase> clases = await repo.GetClasesAsync();
+}
+@section Scripts {
+    <script src="~/js/stages.js"></script>
+    <script>
+        function prueba(idclase) {
+            $("#claseid").val(idclase);
+            console.log($("#claseid").val());
+        }
+        $(document).ready(function () {
+            
+            $(".btn-vuelo").each(function () {
+                $(this).click(function(){
+                    $("#idvuelo").val($(this).val());
+                    $("#clases").load("/Vuelos/Clases?idVuelo=" + $("#idvuelo").val())
+                })
+            })
+        });
+    </script>
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/vuelos.css" />
+}
+<div class="container-fluid py-5 separator"></div>
+@if (Model != null)
+{
+    <form method="post">
+        
+        <div class="container-fluid container py-5">
+        <div class="progress-container">
+            <ul id="progressbar">
+                <li class="active"
+                    id="step1">
+                    <strong>Vuelos</strong>
+                </li>
+                <li id="step2">
+                    <strong>Tarifas</strong>
+                </li>
+                <li id="step3">
+                    <strong>Step 3</strong>
+                </li>
+                <li id="step4">
+                    <strong>Step 4</strong>
+                </li>
+            </ul>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        <div class="step-container">
+            <fieldset>
+                <div class="row p-3">
+                    <p class="fs-4">
+                        <i class="fa-solid fa-plane"></i> Vuelos (@Model.Count)
+                    </p>
+                    <div class="container-fluid py-3 col">
+                        <input type="hidden" name="idvuelo" value="0" id="idvuelo"/>
+                        @foreach (VueloView vuelo in Model)
+                        {
+                            TimeSpan diferenciaVuelo = @vuelo.FechaLlegada.Subtract(vuelo.FechaSalida);
+                            <div class="flight-card card px-3 py-1 shadow mb-5" style="min-height: 200px">
+                                <div class="card-logo" style="width:auto;">
+                                    <img src="~/img/LOGO_CRIS_provisional.png" class="img-fluid" />
+                                </div>
+                                <div class="card-flight-body">
+                                    <div class="text-center data">
+                                        <span class="hour">
+
+                                            @vuelo.FechaSalida.Hour : @vuelo.FechaSalida.Minute@if(vuelo.FechaSalida.Minute == 0){<span>0</span>}
+                                        </span>
+                                        <br />
+                                        <span class="city">@vuelo.CiudadOrigen</span>
+                                    </div>
+                                    <div class="text-center card-plane">
+                                        <span><i class="text-secondary fs-3 fa-solid fa-plane-departure"></i></span>
+                                        <span class="text-secondary">
+                                            @diferenciaVuelo.Hours h @diferenciaVuelo.Minutes min
+                                        </span>
+                                    </div>
+                                    <div class="text-center data">
+                                        <span class="hour">
+                                            @vuelo.FechaLlegada.Hour : @vuelo.FechaLlegada.Minute@if(vuelo.FechaLlegada.Minute == 0){<span>0</span>}
+                                        </span>
+                                        <br />
+                                        <span class="city">@vuelo.CiudadDestino</span>
+                                    </div>
+                                </div>
+                                <div class="card-button" style="width:auto;">
+                                    <button type="button" class="btn btn-primary next-step btn-vuelo" value="@vuelo.IdVuelo">Seleccionar</button>
+                                </div>
+                            </div>
+
+                        }
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset>
+                    <input type="hidden" name="clase" value="0" id="claseid" />
+                    <div id="clases" class="row mb-3 text-center p-3 m-auto">
+                       
+                    </div>
+                <input type="button"
+                       name="previous-step"
+                       class="previous-step btn btn-secondary"
+                       value="Volver" />
+            </fieldset>
+            <fieldset>
+                <h2>Welcome To GFG Step 3</h2>
+                <input type="button"
+                       name="next-step"
+                       class="next-step"
+                       value="Final Step" />
+                <input type="button"
+                       name="previous-step"
+                       class="previous-step"
+                       value="Volver" />
+            </fieldset>
+            <fieldset>
+                <div class="finish">
+                    <h2 class="text">
+                        <strong>FINISHED</strong>
+                    </h2>
+                </div>
+                <input type="button"
+                       name="previous-step"
+                       class="previous-step"
+                       value="Volver" />
+            </fieldset>
+        </div>
+
+
+    </div>
+    </form>
+}
+else
+{
+    <h1>Ahora mismo no tenemos vuelos disponibles</h1>
+}
