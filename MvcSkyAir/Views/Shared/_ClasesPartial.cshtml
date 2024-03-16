@@ -24,8 +24,11 @@
                     <li>Equipaje de mano: @clase.EquipajeMano maleta</li>
                     <li>Equipaje en cabina: @clase.EquipajeCabina</li>
                 </ul>
-                <input type="checkbox" class="btn-check btn btn-primary" value="">
-                <label class="btn btn-primary next-step" onclick="prueba(@clase.IdTipoClase)">Seleccionar</label>
+                <button type="button"
+                        class="btn btn-primary next-step btn-clase"
+                    onclick="seleccionarClase(@clase.IdTipoClase)">
+                    Seleccionar
+                </button>
             </div>
         </div>
     </div>

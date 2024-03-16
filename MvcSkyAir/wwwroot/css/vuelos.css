@@ -2,6 +2,20 @@
     --navy-blue: #0E2E7F;
     --blue-secondary: #5676C6;
 }
+body{
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    min-height:100vh;
+}
+main{
+    flex:1;
+}
+
+.bg-sky {
+    width:100%;
+    height:100%;
+}
 
 .card-logo img {
     max-height: 80px;

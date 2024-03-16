@@ -1,142 +1,320 @@
 ﻿@model List<VueloView>
 @{
-    Layout = "LayoutViajes";
+    Layout = "_LayoutViajes";
     ViewData["Title"] = "Vuelos";
     List<TipoClase> clases = await repo.GetClasesAsync();
 }
 @section Scripts {
     <script src="~/js/stages.js"></script>
     <script>
-        function prueba(idclase) {
-            $("#claseid").val(idclase);
-            console.log($("#claseid").val());
+        function seleccionarClase(idClase) {
+            $("#claseid").val(idClase);
+            $("#btn-next-clases").removeClass("d-none");
+            changeColorClaseCard(idClase);
         }
-        $(document).ready(function () {
-            
-            $(".btn-vuelo").each(function () {
-                $(this).click(function(){
-                    $("#idvuelo").val($(this).val());
-                    $("#clases").load("/Vuelos/Clases?idVuelo=" + $("#idvuelo").val())
-                })
+
+        //La posicion puede ser 1 o 2
+        function changeColorClaseCard(idClase) {
+            let posicionSelected = 0;
+            let posicionNoSelected = 0;
+            if (idClase == 2) {
+                posicionSelected = 1
+                posicionNoSelected = 0;
+                // $(".card-header")[posicionSelected].classList.remove("bg-primary");
+                // $(".card-header")[posicionSelected].classList.add("bg-success");
+                // $(".card-header")[posicionNoSelected].classList.add("bg-primary");
+                // $(".card-header")[posicionNoSelected].classList.remove("bg-success");
+            } else if (idClase == 1) {
+                posicionSelected = 0
+                posicionNoSelected = 1;
+
+            }
+            $(".card-header")[posicionSelected].classList.remove("bg-primary");
+            $(".card-header")[posicionSelected].classList.add("bg-success");
+            $(".card-header")[posicionNoSelected].classList.add("bg-primary");
+            $(".card-header")[posicionNoSelected].classList.remove("bg-success");
+            $(".btn-clase")[posicionSelected].classList.remove("btn-primary");
+            $(".btn-clase")[posicionSelected].classList.add("btn-success");
+            $(".btn-clase")[posicionNoSelected].classList.remove("btn-success");
+            $(".btn-clase")[posicionNoSelected].classList.add("btn-primary");
+        }
+
+        $(".btn-vuelo").each(function () {
+            $(this).click(function () {
+                $("#idvuelo").val($(this).val());
+                $("#clases").load("/Vuelos/Clases?idVuelo=" + $("#idvuelo").val())
             })
+        })
+    </script>
+    <script src="~/js/jquery.seat-charts.js"></script>
+    <script>
+        var firstSeatLabel = 1;
+
+        $(document).ready(function () {
+            var $cart = $("#selected-seats"),
+                $counter = $("#counter"),
+                $total = $("#total"),
+                sc = $("#seat-map").seatCharts({
+                    map: [
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "fff_fff_fff",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                        "eee_eee_eee",
+                    ],
+                    seats: {
+                        f: {
+                            price: 100,
+                            classes: "first-class", //your custom CSS class
+                            category: "First Class",
+                        },
+                        e: {
+                            price: 40,
+                            classes: "economy-class", //your custom CSS class
+                            category: "Economy Class",
+                        },
+                    },
+                    naming: {
+                        top: false,
+                        getLabel: function (character, row, column) {
+                            return firstSeatLabel++;
+                        },
+                    },
+                    legend: {
+                        node: $("#legend"),
+                        items: [
+                            ["f", "available", "First Class"],
+                            ["e", "available", "Economy Class"],
+                            ["f", "unavailable", "Already Booked"],
+                        ],
+                    },
+                    click: function () {
+                        if (this.status() == "available") {
+                            //let's create a new <li> which we'll add to the cart items
+                            $(
+                                "<li>" +
+                                this.data().category +
+                                " Seat # " +
+                                this.settings.label +
+                                ": <b>$" +
+                                this.data().price +
+                                '</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>'
+                            )
+                                .attr("id", "cart-item-" + this.settings.id)
+                                .data("seatId", this.settings.id)
+                                .appendTo($cart);
+
+                            /*
+                             * Lets update the counter and total
+                             *
+                             * .find function will not find the current seat, because it will change its stauts only after return
+                             * 'selected'. This is why we have to add 1 to the length and the current seat price to the total.
+                             */
+                            $counter.text(sc.find("selected").length + 1);
+                            $total.text(recalculateTotal(sc) + this.data().price);
+
+                            return "selected";
+                        } else if (this.status() == "selected") {
+                            //update the counter
+                            $counter.text(sc.find("selected").length - 1);
+                            //and total
+                            $total.text(recalculateTotal(sc) - this.data().price);
+
+                            //remove the item from our cart
+                            $("#cart-item-" + this.settings.id).remove();
+
+                            //seat has been vacated
+                            return "available";
+                        } else if (this.status() == "unavailable") {
+                            //seat has been already booked
+                            return "unavailable";
+                        } else {
+                            return this.style();
+                        }
+                    },
+                });
+
+            //this will handle "[cancel]" link clicks
+            $("#selected-seats").on("click", ".cancel-cart-item", function () {
+                //let's just trigger Click event on the appropriate seat, so we don't have to repeat the logic here
+                sc.get($(this).parents("li:first").data("seatId")).click();
+            });
+
+            //let's pretend some seats have already been booked
+            sc.get(["1_2", "4_1", "7_1", "7_2"]).status("unavailable");
         });
+
+        function recalculateTotal(sc) {
+            var total = 0;
+
+            //basically find every selected seat and sum its price
+            sc.find("selected").each(function () {
+                total += this.data().price;
+            });
+
+            return total;
+        }
     </script>
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/vuelos.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.seat-charts.css" />
 }
 <div class="container-fluid py-5 separator"></div>
 @if (Model != null)
 {
     <form method="post">
-        
+
         <div class="container-fluid container py-5">
-        <div class="progress-container">
-            <ul id="progressbar">
-                <li class="active"
-                    id="step1">
-                    <strong>Vuelos</strong>
-                </li>
-                <li id="step2">
-                    <strong>Tarifas</strong>
-                </li>
-                <li id="step3">
-                    <strong>Step 3</strong>
-                </li>
-                <li id="step4">
-                    <strong>Step 4</strong>
-                </li>
-            </ul>
-            <div class="progress">
-                <div class="progress-bar"></div>
-            </div>
-        </div>
-        <div class="step-container">
-            <fieldset>
-                <div class="row p-3">
-                    <p class="fs-4">
-                        <i class="fa-solid fa-plane"></i> Vuelos (@Model.Count)
-                    </p>
-                    <div class="container-fluid py-3 col">
-                        <input type="hidden" name="idvuelo" value="0" id="idvuelo"/>
-                        @foreach (VueloView vuelo in Model)
-                        {
-                            TimeSpan diferenciaVuelo = @vuelo.FechaLlegada.Subtract(vuelo.FechaSalida);
-                            <div class="flight-card card px-3 py-1 shadow mb-5" style="min-height: 200px">
-                                <div class="card-logo" style="width:auto;">
-                                    <img src="~/img/LOGO_CRIS_provisional.png" class="img-fluid" />
-                                </div>
-                                <div class="card-flight-body">
-                                    <div class="text-center data">
-                                        <span class="hour">
-
-                                            @vuelo.FechaSalida.Hour : @vuelo.FechaSalida.Minute@if(vuelo.FechaSalida.Minute == 0){<span>0</span>}
-                                        </span>
-                                        <br />
-                                        <span class="city">@vuelo.CiudadOrigen</span>
-                                    </div>
-                                    <div class="text-center card-plane">
-                                        <span><i class="text-secondary fs-3 fa-solid fa-plane-departure"></i></span>
-                                        <span class="text-secondary">
-                                            @diferenciaVuelo.Hours h @diferenciaVuelo.Minutes min
-                                        </span>
-                                    </div>
-                                    <div class="text-center data">
-                                        <span class="hour">
-                                            @vuelo.FechaLlegada.Hour : @vuelo.FechaLlegada.Minute@if(vuelo.FechaLlegada.Minute == 0){<span>0</span>}
-                                        </span>
-                                        <br />
-                                        <span class="city">@vuelo.CiudadDestino</span>
-                                    </div>
-                                </div>
-                                <div class="card-button" style="width:auto;">
-                                    <button type="button" class="btn btn-primary next-step btn-vuelo" value="@vuelo.IdVuelo">Seleccionar</button>
-                                </div>
-                            </div>
-
-                        }
-                    </div>
+            <div class="progress-container">
+                <ul id="progressbar">
+                    <li class="active"
+                        id="step1">
+                        <strong>Vuelos</strong>
+                    </li>
+                    <li id="step2">
+                        <strong>Tarifas</strong>
+                    </li>
+                    <li id="step3">
+                        <strong>Asientos</strong>
+                    </li>
+                    <li id="step4">
+                        <strong>Step 4</strong>
+                    </li>
+                </ul>
+                <div class="progress">
+                    <div class="progress-bar"></div>
                 </div>
-            </fieldset>
-            <fieldset>
+            </div>
+            <div class="step-container">
+                <fieldset>
+                    <div class="row p-3">
+                        <p class="fs-4">
+                            <i class="fa-solid fa-plane"></i> Vuelos (@Model.Count)
+                        </p>
+                        <div class="container-fluid py-3 col">
+                            <input type="hidden" name="idvuelo" value="0" id="idvuelo" />
+                            @foreach (VueloView vuelo in Model)
+                            {
+                                TimeSpan diferenciaVuelo = @vuelo.FechaLlegada.Subtract(vuelo.FechaSalida);
+                                <div class="flight-card card px-3 py-1 shadow mb-5" style="min-height: 200px">
+                                    <div class="card-logo" style="width:auto;">
+                                        <img src="~/img/LOGO_CRIS_provisional.png" class="img-fluid" />
+                                    </div>
+                                    <div class="card-flight-body">
+                                        <div class="text-center data">
+                                            <span class="hour">
+
+                                                @vuelo.FechaSalida.Hour : @vuelo.FechaSalida.Minute@if (vuelo.FechaSalida.Minute == 0)
+                                                {
+                                                    <span>0</span>
+                                                }
+                                            </span>
+                                            <br />
+                                            <span class="city">@vuelo.CiudadOrigen</span>
+                                        </div>
+                                        <div class="text-center card-plane">
+                                            <span><i class="text-secondary fs-3 fa-solid fa-plane-departure"></i></span>
+                                            <span class="text-secondary">
+                                                @diferenciaVuelo.Hours h @diferenciaVuelo.Minutes min
+                                            </span>
+                                        </div>
+                                        <div class="text-center data">
+                                            <span class="hour">
+                                                @vuelo.FechaLlegada.Hour : @vuelo.FechaLlegada.Minute@if (vuelo.FechaLlegada.Minute == 0)
+                                                {
+                                                    <span>0</span>
+                                                }
+                                            </span>
+                                            <br />
+                                            <span class="city">@vuelo.CiudadDestino</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-button" style="width:auto;">
+                                        <button type="button" class="btn btn-primary next-step btn-vuelo" value="@vuelo.IdVuelo">Seleccionar</button>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
                     <input type="hidden" name="clase" value="0" id="claseid" />
                     <div id="clases" class="row mb-3 text-center p-3 m-auto">
-                       
+                        @* PARTIAL VIEW *@
                     </div>
-                <input type="button"
-                       name="previous-step"
-                       class="previous-step btn btn-secondary"
-                       value="Volver" />
-            </fieldset>
-            <fieldset>
-                <h2>Welcome To GFG Step 3</h2>
-                <input type="button"
-                       name="next-step"
-                       class="next-step"
-                       value="Final Step" />
-                <input type="button"
-                       name="previous-step"
-                       class="previous-step"
-                       value="Volver" />
-            </fieldset>
-            <fieldset>
-                <div class="finish">
-                    <h2 class="text">
-                        <strong>FINISHED</strong>
-                    </h2>
-                </div>
-                <input type="button"
-                       name="previous-step"
-                       class="previous-step"
-                       value="Volver" />
-            </fieldset>
+                    <input type="button"
+                           name="next-step"
+                           id="btn-next-clases"
+                           class="d-none next-step btn btn-primary"
+                           value="Siguiente" />
+                    <input type="button"
+                           name="previous-step"
+                           class="previous-step btn btn-secondary"
+                           value="Volver" />
+                </fieldset>
+                <fieldset>
+                    <h2 class="text-primary">Seleccion de asientos</h2>
+                    <partial name="_AsientosPartial"/>
+                    <input type="button"
+                           name="next-step"
+                           class="next-step"
+                           value="Final Step" />
+                    <input type="button"
+                           name="previous-step"
+                           class="previous-step"
+                           value="Volver" />
+                </fieldset>
+                <fieldset>
+                    <div class="finish">
+                        <h2 class="text">
+                            <strong>FINISHED</strong>
+                        </h2>
+                    </div>
+                    <input type="button"
+                           name="previous-step"
+                           class="previous-step"
+                           value="Volver" />
+                </fieldset>
+            </div>
         </div>
-
-
-    </div>
     </form>
 }
 else
 {
-    <h1>Ahora mismo no tenemos vuelos disponibles</h1>
+    <div class="bg-sky text-center m-auto">
+        <img class="img-fluid w-100"
+             src="https://images.pexels.com/photos/440731/pexels-photo-440731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
+    </div>
+    <p class="fs-1 text-center position-absolute top-50 start-50 translate-middle text-white">
+        Lo siento, ahora mismo no tenemos vuelos disponibles<br/>
+        <a class="btn btn-danger "
+        asp-controller="Home"
+        asp-action="Index">
+            Volver al Inicio
+        </a>
+    </p>
+
 }
