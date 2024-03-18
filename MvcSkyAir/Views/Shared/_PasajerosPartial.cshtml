@@ -1,0 +1,31 @@
+﻿@model int
+<div class="container m-auto p-5">
+
+    @for (int i = 1; i <= Model; i++)
+    {
+        <div class="row mb-5 shadow p-4">
+            <p class="fs-3 card-title text-center mb-3 fw-bold">Pasajero @i</p>
+            <div class="col-md-3 mb-2 ">
+                <label>Nombre</label>
+                <input type="text" class="form-control" name="nombre" />
+            </div>
+            <div class="col-md-3 mb-2 ">
+                <label>Apellido</label>
+                <input type="text" class="form-control" name="apellido" />
+            </div>
+            <div class="col-md-3 mb-2 ">
+                <label>DNI / NIF / Pasaporte</label>
+                <input type="text" class="form-control" name="documento" />
+            </div>
+            <div class="col-md-3 mb-2 ">
+                <label>Telefono</label>
+                <input type="text" class="form-control" name="telefono" />
+            </div>
+            
+           
+           
+        </div>
+        
+
+    }
+</div>

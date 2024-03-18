@@ -21,7 +21,7 @@ namespace MvcSkyAir.Repositories
         {
             var consulta = from datos in this.context.Continentes
                            select datos.Nombre;
-            
+
             List<string> continentesNames = await consulta.Distinct().ToListAsync();
             return continentesNames;
         }
@@ -39,14 +39,14 @@ namespace MvcSkyAir.Repositories
         {
             return await
                 this.context.Paises
-                .Where(x=>x.IdContinente==idContinente).ToListAsync();
+                .Where(x => x.IdContinente == idContinente).ToListAsync();
         }
 
         #endregion
 
         #region CIUDADES VIEW
 
-        
+
         public async Task<List<CiudadView>> GetAllCiudadesViewAsync()
         {
             return await this.context.CiudadesView.ToListAsync();
@@ -54,7 +54,7 @@ namespace MvcSkyAir.Repositories
 
         public async Task<List<CiudadView>> GetCiudadesViewByContinenteAsync(int idContinente)
         {
-            return await 
+            return await
                 this.context.CiudadesView
                 .Where(x => x.IdContinente == idContinente).ToListAsync();
         }
@@ -103,9 +103,29 @@ namespace MvcSkyAir.Repositories
         #endregion
 
 
+
+        #region CLASES
+
         public async Task<List<TipoClase>> GetClasesAsync()
         {
             return await this.context.Clases.ToListAsync();
         }
+
+
+        #endregion
+
+
+        #region Billetes
+
+        public async Task<List<string>> GetAsientosBilletesByVuelo(int idVuelo)
+        {
+            var consulta = from datos in this.context.Billetes
+                           where datos.IdVuelo == idVuelo
+                           select datos.Asiento;
+            var a=await consulta.ToListAsync();
+            return a;
+        }
+
+        #endregion
     }
 }

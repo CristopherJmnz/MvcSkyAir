@@ -15,5 +15,6 @@ namespace MvcSkyAir.Data
         public DbSet<CiudadView> CiudadesView { get; set; }
         public DbSet<VueloView> VuelosView{ get; set; }
         public DbSet<TipoClase> Clases{ get; set; }
+        public DbSet<Billete> Billetes{ get; set; }
     }
 }

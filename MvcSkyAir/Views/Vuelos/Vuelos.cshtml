@@ -6,9 +6,80 @@
 }
 @section Scripts {
     <script src="~/js/stages.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function seleccionarClase(idClase) {
+        let selectedSeats = 0;
+        let maxSeats = @ViewData["PASAJEROS"];
+        function loadAsientos(asientosOcupados) {
+            let letras = "A,B,C,D,E,F,G,H,I";
+            let arrayLetras = letras.split(",");
+            let numasiento = 1;
+            let filas = 10;
+            for (let index = 1; index <= filas; index++) {
+                let li = $("<li>", {
+                    class: "row " + "row--" + index,
+                });
+                let ol = $("<ol>", {
+                    class: "seats",
+                    type: "A",
+                });
+                li.append(ol);
+                $("#cabin").append(li);
+                for (let j = 1; j <= arrayLetras.length; j++) {
+                    let li = $("<li>", {
+                        class: "seat",
+                    });
+                    let input = $("<input>", {
+                        type: "checkbox",
+                        id: index + arrayLetras[j - 1],
+                        class: "asiento",
+                        name: "asientos",
+                        value: index + arrayLetras[j - 1]
+                    });
+                    let label = $("<label>", {
+                        for: index + arrayLetras[j - 1],
+                        text: index + arrayLetras[j - 1],
+                    });
+                    input.change(function () {
+                        if ($(this).is(":checked")) {
+                            // Verificar si se ha alcanzado el límite máximo de asientos seleccionados
+                            selectedSeats++;
+                            if (maxSeats == selectedSeats) {
+                                $("#next-asientos").removeClass("d-none");
+                            }
+
+                            if (selectedSeats > maxSeats) {
+                                selectedSeats = maxSeats;
+                                $("#next-asientos").removeClass("d-none");
+                                // Si se ha alcanzado el límite máximo, mostrar una alerta
+                                alert('Ya has seleccionado el máximo de ' + maxSeats + ' asientos.');
+                                $(this).prop("checked", false); // Desmarcar el checkbox
+                            }
+                        } else {
+                            $("#next-asientos").addClass("d-none");
+                            selectedSeats--;
+                        }
+                        console.log(selectedSeats);
+                    });
+                    numasiento++;
+                    li.append(input);
+                    li.append(label);
+                    ol.append(li);
+                }
+            }
+
+            for (let i = 0; i < asientosOcupados.length; i++) {
+                console.log($(this));
+
+                $("#" + asientosOcupados[i]).attr("disabled", "");
+            }
+            //deshabiltar asientos poniendo el atributo disabled a las cajas con el id del array lista asientos
+        }
+
+
+        function seleccionarClase(idClase,precio) {
             $("#claseid").val(idClase);
+            $("#precio").val(precio);
             $("#btn-next-clases").removeClass("d-none");
             changeColorClaseCard(idClase);
         }
@@ -20,10 +91,6 @@
             if (idClase == 2) {
                 posicionSelected = 1
                 posicionNoSelected = 0;
-                // $(".card-header")[posicionSelected].classList.remove("bg-primary");
-                // $(".card-header")[posicionSelected].classList.add("bg-success");
-                // $(".card-header")[posicionNoSelected].classList.add("bg-primary");
-                // $(".card-header")[posicionNoSelected].classList.remove("bg-success");
             } else if (idClase == 1) {
                 posicionSelected = 0
                 posicionNoSelected = 1;
@@ -45,141 +112,75 @@
                 $("#clases").load("/Vuelos/Clases?idVuelo=" + $("#idvuelo").val())
             })
         })
-    </script>
-    <script src="~/js/jquery.seat-charts.js"></script>
-    <script>
-        var firstSeatLabel = 1;
 
-        $(document).ready(function () {
-            var $cart = $("#selected-seats"),
-                $counter = $("#counter"),
-                $total = $("#total"),
-                sc = $("#seat-map").seatCharts({
-                    map: [
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "fff_fff_fff",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                        "eee_eee_eee",
-                    ],
-                    seats: {
-                        f: {
-                            price: 100,
-                            classes: "first-class", //your custom CSS class
-                            category: "First Class",
-                        },
-                        e: {
-                            price: 40,
-                            classes: "economy-class", //your custom CSS class
-                            category: "Economy Class",
-                        },
+
+
+        $("#btn-next-clases").click(function () {
+            console.log("work")
+            var selectedFlightId = $("#idvuelo").val(); // Obtén el ID del vuelo seleccionado
+            $("#asientos").data("selected-flight-id", selectedFlightId); // Almacena el ID en el contenedor de la partial view
+
+            // Carga la partial view
+            $("#asientos").load("/Vuelos/AsientosPartial?idVuelo=" + selectedFlightId, function () {
+                // Una vez cargada la partial view, extrae el ID del vuelo y realiza una llamada AJAX para obtener la capacidad
+                var flightId = $("#idvuelo").val();
+                $.ajax({
+                    url: "/Vuelos/ObtenerAsientos?idVuelo=" + flightId,
+                    method: "GET",
+                    success: function (asientos) {
+                        // Llama a la función initSeatMap con la capacidad obtenida
+                        loadAsientos(asientos); /* tengo que pasarle esto (@ViewData["PASAJEROS"], asientos) */
                     },
-                    naming: {
-                        top: false,
-                        getLabel: function (character, row, column) {
-                            return firstSeatLabel++;
-                        },
-                    },
-                    legend: {
-                        node: $("#legend"),
-                        items: [
-                            ["f", "available", "First Class"],
-                            ["e", "available", "Economy Class"],
-                            ["f", "unavailable", "Already Booked"],
-                        ],
-                    },
-                    click: function () {
-                        if (this.status() == "available") {
-                            //let's create a new <li> which we'll add to the cart items
-                            $(
-                                "<li>" +
-                                this.data().category +
-                                " Seat # " +
-                                this.settings.label +
-                                ": <b>$" +
-                                this.data().price +
-                                '</b> <a href="#" class="cancel-cart-item">[cancel]</a></li>'
-                            )
-                                .attr("id", "cart-item-" + this.settings.id)
-                                .data("seatId", this.settings.id)
-                                .appendTo($cart);
-
-                            /*
-                             * Lets update the counter and total
-                             *
-                             * .find function will not find the current seat, because it will change its stauts only after return
-                             * 'selected'. This is why we have to add 1 to the length and the current seat price to the total.
-                             */
-                            $counter.text(sc.find("selected").length + 1);
-                            $total.text(recalculateTotal(sc) + this.data().price);
-
-                            return "selected";
-                        } else if (this.status() == "selected") {
-                            //update the counter
-                            $counter.text(sc.find("selected").length - 1);
-                            //and total
-                            $total.text(recalculateTotal(sc) - this.data().price);
-
-                            //remove the item from our cart
-                            $("#cart-item-" + this.settings.id).remove();
-
-                            //seat has been vacated
-                            return "available";
-                        } else if (this.status() == "unavailable") {
-                            //seat has been already booked
-                            return "unavailable";
-                        } else {
-                            return this.style();
-                        }
-                    },
+                    error: function () {
+                        console.error("Error al obtener la capacidad del vuelo.");
+                    }
                 });
-
-            //this will handle "[cancel]" link clicks
-            $("#selected-seats").on("click", ".cancel-cart-item", function () {
-                //let's just trigger Click event on the appropriate seat, so we don't have to repeat the logic here
-                sc.get($(this).parents("li:first").data("seatId")).click();
             });
-
-            //let's pretend some seats have already been booked
-            sc.get(["1_2", "4_1", "7_1", "7_2"]).status("unavailable");
         });
 
-        function recalculateTotal(sc) {
-            var total = 0;
+        $("#next-asientos").click(function () {
+            var pasajeros = @ViewData["PASAJEROS"]; // Almacena el ID en el contenedor de la partial view
 
-            //basically find every selected seat and sum its price
-            sc.find("selected").each(function () {
-                total += this.data().price;
+            $("#data-pasajeros").load("/Vuelos/PasajerosPartial?pasajeros=" + pasajeros);
+        });
+
+        $("#next-datos").click(function () {
+            var pasajeros = @ViewData["PASAJEROS"]; // Almacena el ID en el contenedor de la partial view
+            let asientosUrl = "&asientos=";
+            let clase = $("#claseid").val();
+            let precio = $("#precio").val();
+            let asientos = $(".asiento:checked");
+            asientos.each(function () {
+                console.log($(this).val())
+                asientosUrl += $(this).val() + "," ;
             });
+            asientosUrl.trim(",");
+            let url = "/Vuelos/PagoPartial?pasajeros=" + pasajeros + asientosUrl + "&clase=" + clase + "&precio=" + precio
+            console.log(url);
+            $("#pago").load(url, function () {
 
-            return total;
-        }
+            });
+        });
+
+
     </script>
+    function getDiasReservados(fechainicio,fechaFin,idVilla)
+    int dias=(fechafin - fechainicio).days;
+    ArrayFecha=[fechaInicio,13,14,15,16];
+    @for (int i = 0; i < dias; i++)
+    {
+
+        arrayFechas.push(fecha.addDays(i));
+    }
+
+    arrayFechas.push(fechaFin)
+
+
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/vuelos.css" />
     <link rel="stylesheet" type="text/css" href="~/css/jquery.seat-charts.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/plane.css" />
 }
 <div class="container-fluid py-5 separator"></div>
 @if (Model != null)
@@ -200,7 +201,10 @@
                         <strong>Asientos</strong>
                     </li>
                     <li id="step4">
-                        <strong>Step 4</strong>
+                        <strong>Datos</strong>
+                    </li>
+                    <li id="step4">
+                        <strong>Pago</strong>
                     </li>
                 </ul>
                 <div class="progress">
@@ -262,6 +266,7 @@
                 </fieldset>
                 <fieldset>
                     <input type="hidden" name="clase" value="0" id="claseid" />
+                    <input type="hidden" name="precio" value="0" id="precio" />
                     <div id="clases" class="row mb-3 text-center p-3 m-auto">
                         @* PARTIAL VIEW *@
                     </div>
@@ -277,21 +282,34 @@
                 </fieldset>
                 <fieldset>
                     <h2 class="text-primary">Seleccion de asientos</h2>
-                    <partial name="_AsientosPartial"/>
+                    <div id="asientos" data-selected-flight-id="">
+                    </div>
                     <input type="button"
                            name="next-step"
-                           class="next-step"
-                           value="Final Step" />
+                           id="next-asientos"
+                           class="d-none next-step btn btn-primary"
+                           value="Siguiente" />
                     <input type="button"
                            name="previous-step"
                            class="previous-step"
                            value="Volver" />
                 </fieldset>
                 <fieldset>
-                    <div class="finish">
-                        <h2 class="text">
-                            <strong>FINISHED</strong>
-                        </h2>
+                    <div id="data-pasajeros">
+                        @* partial view *@
+                    </div>
+                    <input type="button"
+                           name="next-step"
+                           id="next-datos"
+                           class="next-step btn btn-primary"
+                           value="Siguiente" />
+                    <input type="button"
+                           name="previous-step"
+                           class="previous-step"
+                           value="Volver" />
+                </fieldset><fieldset>
+                    <div id="pago">
+                        @* partial view *@
                     </div>
                     <input type="button"
                            name="previous-step"
@@ -309,10 +327,10 @@ else
              src="https://images.pexels.com/photos/440731/pexels-photo-440731.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" />
     </div>
     <p class="fs-1 text-center position-absolute top-50 start-50 translate-middle text-white">
-        Lo siento, ahora mismo no tenemos vuelos disponibles<br/>
+        Lo siento, ahora mismo no tenemos vuelos disponibles<br />
         <a class="btn btn-danger "
-        asp-controller="Home"
-        asp-action="Index">
+           asp-controller="Home"
+           asp-action="Index">
             Volver al Inicio
         </a>
     </p>

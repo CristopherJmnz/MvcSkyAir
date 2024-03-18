@@ -35,5 +35,12 @@ namespace MvcSkyAir.Repositories
 
         Task<List<TipoClase>> GetClasesAsync();
         #endregion
+
+
+        #region BILLETES
+
+        Task<List<string>> GetAsientosBilletesByVuelo(int idVuelo);
+
+        #endregion
     }
 }

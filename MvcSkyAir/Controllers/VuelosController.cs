@@ -21,6 +21,7 @@ namespace MvcSkyAir.Controllers
             DateTime fechaIda, DateTime fechaVuelta, int adultos, int kids)
         {
             List<VueloView> vuelos = await this.repo.SearchVueloAsync(origen, destino, fechaIda, kids, adultos);
+            ViewData["PASAJEROS"]= kids+adultos;
             return View(vuelos);
         }
 
@@ -31,8 +32,42 @@ namespace MvcSkyAir.Controllers
                 Clases = await this.repo.GetClasesAsync(),
                 VueloView = await this.repo.FindVueloViewByIdAsync(idVuelo)
             };
-            //List<int> a = new List<int>();
             return PartialView("_ClasesPartial", model);
+        }
+
+        public async Task<IActionResult> AsientosPartial(int idVuelo)
+        {
+            VueloView vuelo = await this.repo.FindVueloViewByIdAsync(idVuelo);
+            List<string> asientos = new List<string>();
+            ModelVueloAsientos model = new ModelVueloAsientos
+            {
+                Asientos = asientos,
+                Vuelo = vuelo
+            };
+            return PartialView("_AsientosPartial", model);
+        }
+        public async Task<IActionResult> PasajerosPartial(int pasajeros)
+        {
+            return PartialView("_PasajerosPartial", pasajeros);
+        }
+
+        public async Task<IActionResult> PagoPartial(int pasajeros, List<string>asientos, string clase,int precio)
+        {
+            ModelResumenPago model = new ModelResumenPago
+            {
+                Asientos = asientos,
+                Clase = clase,
+                Pasajeros = pasajeros,
+                Precio = precio
+            };
+            return PartialView("_PagoPartial", model);
+        }
+
+        public async Task<ActionResult> ObtenerAsientos(int idVuelo)
+        {
+            // Tu lógica para obtener la capacidad del vuelo
+            List<string> asientos = await this.repo.GetAsientosBilletesByVuelo(idVuelo);
+            return Json(asientos);
         }
     }
 }

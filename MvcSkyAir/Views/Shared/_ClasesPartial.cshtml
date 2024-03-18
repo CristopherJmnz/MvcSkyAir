@@ -1,7 +1,5 @@
 ﻿@model ModelVueloClases
-@{
-    VueloView vuelo = await repo.FindVueloViewByIdAsync(Model.VueloView.IdVuelo);
-}
+
 
 @foreach (TipoClase clase in Model.Clases)
 {
@@ -26,7 +24,7 @@
                 </ul>
                 <button type="button"
                         class="btn btn-primary next-step btn-clase"
-                    onclick="seleccionarClase(@clase.IdTipoClase)">
+                    onclick="seleccionarClase(@clase.IdTipoClase,@precio)">
                     Seleccionar
                 </button>
             </div>
