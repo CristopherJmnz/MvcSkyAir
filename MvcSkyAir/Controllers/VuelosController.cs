@@ -21,8 +21,23 @@ namespace MvcSkyAir.Controllers
             DateTime fechaIda, DateTime fechaVuelta, int adultos, int kids)
         {
             List<VueloView> vuelos = await this.repo.SearchVueloAsync(origen, destino, fechaIda, kids, adultos);
-            ViewData["PASAJEROS"]= kids+adultos;
+            ViewData["PASAJEROS"] = kids + adultos;
             return View(vuelos);
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Pagar(int idVuelo, int equipajeMano, int equipajeCabina, List<string> asientos,
+            decimal precio, List<string> nombre, List<string> documento, List<string> apellido,
+            List<string> email, List<string> telefonoContacto, int idClase)
+        {
+            for (int i = 0; i < nombre.Count; i++)
+            {
+                await this.repo.CreateBilleteAsync
+                    (idVuelo, equipajeMano, equipajeCabina, asientos[i],
+                    precio, nombre[i], documento[i], apellido[i], email[i],
+                    telefonoContacto[i], idClase);
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Clases(int idVuelo)
@@ -51,7 +66,7 @@ namespace MvcSkyAir.Controllers
             return PartialView("_PasajerosPartial", pasajeros);
         }
 
-        public async Task<IActionResult> PagoPartial(int pasajeros, List<string>asientos, string clase,int precio)
+        public async Task<IActionResult> PagoPartial(int pasajeros, List<string> asientos, string clase, int precio)
         {
             ModelResumenPago model = new ModelResumenPago
             {
@@ -68,6 +83,36 @@ namespace MvcSkyAir.Controllers
             // Tu lógica para obtener la capacidad del vuelo
             List<string> asientos = await this.repo.GetAsientosBilletesByVuelo(idVuelo);
             return Json(asientos);
+        }
+
+        public async Task<IActionResult> EstadoDeVuelo()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> GestionarReserva()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GestionarReserva(string apellido, int idVuelo)
+        {
+            BilleteVueloView billeteView = await this.repo.FindBilleteViewByApellidoAndIdVueloAsync(idVuelo, apellido);
+            if (billeteView != null)
+            {
+                return RedirectToAction("DetallesViaje", new { idBillete = billeteView.IdBillete });
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        public async Task<IActionResult> DetallesViaje(int idBillete)
+        {
+            BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
+            return View(billeteView);
         }
     }
 }

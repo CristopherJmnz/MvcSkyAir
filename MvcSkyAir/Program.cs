@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
+builder.Services.AddAntiforgery();
 builder.Services.AddTransient<ISkyAirRepository,SkyAirRepository>();
 string connectionString = builder.Configuration.GetConnectionString("SkyAirSqlServer");
 builder.Services.AddDbContext<SkyAirContext>(options=>options.UseSqlServer(connectionString));

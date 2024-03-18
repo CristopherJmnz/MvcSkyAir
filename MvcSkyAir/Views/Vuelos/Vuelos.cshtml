@@ -3,6 +3,7 @@
     Layout = "_LayoutViajes";
     ViewData["Title"] = "Vuelos";
     List<TipoClase> clases = await repo.GetClasesAsync();
+
 }
 @section Scripts {
     <script src="~/js/stages.js"></script>
@@ -147,14 +148,14 @@
         $("#next-datos").click(function () {
             var pasajeros = @ViewData["PASAJEROS"]; // Almacena el ID en el contenedor de la partial view
             let asientosUrl = "&asientos=";
-            let clase = $("#claseid").val();
+            let clase = $("#claseid").val()==1 ? 'turista' : 'Bussiness';
             let precio = $("#precio").val();
             let asientos = $(".asiento:checked");
             asientos.each(function () {
                 console.log($(this).val())
                 asientosUrl += $(this).val() + "," ;
             });
-            asientosUrl.trim(",");
+            asientosUrl=asientosUrl.substring(0, asientosUrl.length - 1);
             let url = "/Vuelos/PagoPartial?pasajeros=" + pasajeros + asientosUrl + "&clase=" + clase + "&precio=" + precio
             console.log(url);
             $("#pago").load(url, function () {
@@ -164,17 +165,6 @@
 
 
     </script>
-    function getDiasReservados(fechainicio,fechaFin,idVilla)
-    int dias=(fechafin - fechainicio).days;
-    ArrayFecha=[fechaInicio,13,14,15,16];
-    @for (int i = 0; i < dias; i++)
-    {
-
-        arrayFechas.push(fecha.addDays(i));
-    }
-
-    arrayFechas.push(fechaFin)
-
 
 }
 @section Styles {
@@ -185,8 +175,8 @@
 <div class="container-fluid py-5 separator"></div>
 @if (Model != null)
 {
-    <form method="post">
-
+    <form method="post" asp-action="Pagar" asp-controller="Vuelos">
+        @Html.AntiForgeryToken();
         <div class="container-fluid container py-5">
             <div class="progress-container">
                 <ul id="progressbar">
@@ -221,6 +211,16 @@
                             <input type="hidden" name="idvuelo" value="0" id="idvuelo" />
                             @foreach (VueloView vuelo in Model)
                             {
+                                string minutosSalida = vuelo.FechaSalida.TimeOfDay.Minutes.ToString();
+                                string minutosLlegada = vuelo.FechaLlegada.TimeOfDay.Minutes.ToString();
+                                if (minutosLlegada == "0")
+                                {
+                                    minutosLlegada = "00";
+                                }
+                                if (minutosSalida == "0")
+                                {
+                                    minutosSalida = "00";
+                                }
                                 TimeSpan diferenciaVuelo = @vuelo.FechaLlegada.Subtract(vuelo.FechaSalida);
                                 <div class="flight-card card px-3 py-1 shadow mb-5" style="min-height: 200px">
                                     <div class="card-logo" style="width:auto;">
@@ -230,10 +230,7 @@
                                         <div class="text-center data">
                                             <span class="hour">
 
-                                                @vuelo.FechaSalida.Hour : @vuelo.FechaSalida.Minute@if (vuelo.FechaSalida.Minute == 0)
-                                                {
-                                                    <span>0</span>
-                                                }
+                                                @vuelo.FechaSalida.Hour : @minutosSalida
                                             </span>
                                             <br />
                                             <span class="city">@vuelo.CiudadOrigen</span>
@@ -246,10 +243,7 @@
                                         </div>
                                         <div class="text-center data">
                                             <span class="hour">
-                                                @vuelo.FechaLlegada.Hour : @vuelo.FechaLlegada.Minute@if (vuelo.FechaLlegada.Minute == 0)
-                                                {
-                                                    <span>0</span>
-                                                }
+                                                @vuelo.FechaLlegada.Hour : @minutosLlegada
                                             </span>
                                             <br />
                                             <span class="city">@vuelo.CiudadDestino</span>
@@ -265,7 +259,7 @@
                     </div>
                 </fieldset>
                 <fieldset>
-                    <input type="hidden" name="clase" value="0" id="claseid" />
+                    <input type="hidden" name="idClase" value="0" id="claseid" />
                     <input type="hidden" name="precio" value="0" id="precio" />
                     <div id="clases" class="row mb-3 text-center p-3 m-auto">
                         @* PARTIAL VIEW *@
@@ -311,6 +305,9 @@
                     <div id="pago">
                         @* partial view *@
                     </div>
+                    <input type="submit"
+                           class="next-step btn btn-success"
+                           value="Pagar" />
                     <input type="button"
                            name="previous-step"
                            class="previous-step"

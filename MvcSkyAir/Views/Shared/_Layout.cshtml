@@ -83,10 +83,12 @@
                         <a href="packages.html" class="nav-item nav-link">Packages</a>
                         <a href="blog.html" class="nav-item nav-link">Blog</a>
                         <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">Pages</a>
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            Tus vuelos
+                            </a>
                             <div class="dropdown-menu m-0">
-                                <a href="destination.html" class="dropdown-item">Destination</a>
-                                <a href="tour.html" class="dropdown-item active">Explore Tour</a>
+                            <a asp-controller="Vuelos" asp-action="GestionarReserva" class="dropdown-item">Estado de tu vuelo</a>
+                                <a href="tour.html" class="dropdown-item">Gestiona tu reserva</a>
                                 <a href="booking.html" class="dropdown-item">Travel Booking</a>
                                 <a href="gallery.html" class="dropdown-item">Our Gallery</a>
                                 <a href="guides.html" class="dropdown-item">Travel Guides</a>

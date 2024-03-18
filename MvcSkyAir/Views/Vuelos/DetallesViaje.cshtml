@@ -1,0 +1,38 @@
+﻿@model BilleteVueloView
+@{
+    string minutosSalida = Model.FechaSalida.TimeOfDay.Minutes.ToString();
+    string minutosLlegada = Model.FechaLlegada.TimeOfDay.Minutes.ToString();
+    if (minutosLlegada == "0")
+    {
+        minutosLlegada = "00";
+    }
+    if (minutosSalida == "0")
+    {
+        minutosSalida = "00";
+    }
+}
+<div class="container py-5"></div>
+<div class="container py-3 mb-4">
+    <div class="row mb-3">
+        <div class="col-12 fs-1 text-center">
+            @Model.CiudadOrigen <i class="fa-solid fa-plane"></i> @Model.CiudadDestino
+        </div>
+        <p class="fs-2 text-warning text-center">@Model.Estado</p>
+        <p class="fs-2 text-secondary text-center">
+            Salida:  @Model.FechaSalida.ToLongDateString() @Model.FechaSalida.TimeOfDay.Hours:@minutosSalida
+        </p>
+        <p class="fs-2 text-secondary text-center">
+            Llegada: @Model.FechaLlegada.ToLongDateString()  @Model.FechaLlegada.TimeOfDay.Hours:@minutosLlegada
+        </p>
+    </div>
+    <p class="text-center fs-4">Datos del vuelo</p>
+    <ul class="list-group">
+        @* <li class="list-group-item">Salida: @Model.FechaSalida.ToLongDateString() @Model.FechaSalida.TimeOfDay.Hours:@minutosSalida</li>
+        <li class="list-group-item">Llegada: @Model.FechaLlegada.ToLongDateString()  @Model.FechaLlegada.TimeOfDay.Hours:@minutosLlegada</li>
+         *@<li class="list-group-item">Clase: @Model.Clase</li>
+        <li class="list-group-item">Equipaje en cabina: @Model.EquipajeCabina</li>
+        <li class="list-group-item">Equipaje de mano: @Model.EquipajeMano</li>
+        <li class="list-group-item">Avion: @Model.Avion</li>
+        <li class="list-group-item">Compra realizada: @Model.FechaCompra.ToShortDateString()</li>
+    </ul>
+</div>

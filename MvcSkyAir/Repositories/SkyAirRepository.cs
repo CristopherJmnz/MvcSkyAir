@@ -111,6 +111,10 @@ namespace MvcSkyAir.Repositories
             return await this.context.Clases.ToListAsync();
         }
 
+        public async Task<TipoClase> FindClaseAsync(int idClase)
+        {
+            return await this.context.Clases.FirstOrDefaultAsync(x=>x.IdTipoClase==idClase);
+        }
 
         #endregion
 
@@ -124,6 +128,62 @@ namespace MvcSkyAir.Repositories
                            select datos.Asiento;
             var a=await consulta.ToListAsync();
             return a;
+        }
+
+        public async Task<int> GetMaxBilleteIdAsync()
+        {
+            return this.context.Billetes.Max(x => x.IdBillete) + 1;
+        }
+
+        public async Task CreateBilleteAsync
+            (int idVuelo, int equipajeMano, int equipajeCabina, string asiento,
+            decimal precio, string nombre, string documento, string apellido,
+            string email, string telefonoContacto, int idClase)
+        {
+            TipoClase clase = await this.FindClaseAsync(idClase);
+            if (equipajeCabina==0)
+            {
+                equipajeCabina = clase.EquipajeCabina;
+            }
+            if (equipajeMano == 0)
+            {
+                equipajeMano = clase.EquipajeMano;
+            }
+            Billete billete = new Billete
+            {
+                Apellido = apellido,
+                Asiento = asiento,
+                Precio = precio,
+                DocumentoIdentidad = documento,
+                Email = email,
+                EquipajeCabina = equipajeCabina,
+                EquipajeMano = equipajeMano,
+                FechaCompra = DateTime.Now,
+                IdClase = idClase,
+                IdVuelo = idVuelo,
+                Nombre = nombre,
+                TelefonoContacto = telefonoContacto,
+                IdBillete= await this.GetMaxBilleteIdAsync()
+            };
+            this.context.Billetes.Add(billete);
+            await this.context.SaveChangesAsync();
+        }
+
+        #endregion
+
+
+        #region BilleteVueloView
+
+        public async Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(int idVuelo,string apellido)
+        {
+            return await this.context.BilletesView
+                .FirstOrDefaultAsync(x => x.IdVuelo == idVuelo && x.Apellido == apellido);
+        }
+
+        public async Task<BilleteVueloView> FindBilleteViewByIdAsync(int idBillete)
+        {
+            return await this.context.BilletesView
+                .FirstOrDefaultAsync(x => x.IdBillete == idBillete);
         }
 
         #endregion

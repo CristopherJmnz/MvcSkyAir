@@ -1,17 +1,36 @@
 ﻿@model ModelResumenPago
-<div class="container">
-    <div class="form-pago">
+<div class="container row py-4">
+    <div class="form-pago col-md-9 mb-3">
+        <p class="fs-3">Datos de pago</p>
+        <label>Titular</label>
+        <input type="text" class="form-control mb-3" name="titular" required/>
         <label>NumTarjeta</label>
+        <input type="text" class="form-control mb-3" name="numTarjeta" required />
+        <div class="row">
+            <div class="col-md-6">
+                <label>CVV</label>
+                <input type="text" class="form-control" name="cvv" required />
+            </div>
+            <div class="col-md-6">
+                <label>Fecha Caducidad</label>
+                <input type="month" class="form-control" name="cvv" required />
+            </div>
+        </div>
     </div>
-    <div class="resumen">
+    <div class="resumen col-md-3">
         <ul class="list-group">
-            <li class="list-group-item">@Model.Pasajeros</li>
-            @foreach (string a in Model.Asientos){
-                <li class="list-group-item">@a</li>
-            }
-            <li class="list-group-item"></li>
-            <li class="list-group-item">Clase</li>
-            <li class="list-group-item">Asientos</li>
+            <li class="list-group-item text-center fs-3 fw-bold">Resumen</li>
+            <li class="list-group-item"><span class="fw-bold">Cantidad pasajeros: </span>@Model.Pasajeros</li>
+            <li class="list-group-item">
+                <span class="fw-bold">
+                    Asientos:
+                </span>
+                @foreach (string seat in Model.Asientos){
+                    @seat 
+                }
+            </li>
+            <li class="list-group-item"><span class="fw-bold">Clase: </span>@Model.Clase</li>
+            <li class="list-group-item"><span class="fw-bold">Importe Total:</span>@Model.Precio€</li>
         </ul>
     </div>
 </div>  

@@ -15,7 +15,7 @@ namespace MvcSkyAir.Models
         public string Asiento { get; set; }
         [Column("EquipajeMano")]
         public int EquipajeMano { get; set; }
-        [Column("EquioajeCabina")]
+        [Column("EquipajeCabina")]
         public int EquipajeCabina { get; set; }
         [Column("Precio")]
         public decimal Precio { get; set; }
@@ -31,7 +31,7 @@ namespace MvcSkyAir.Models
         public string TelefonoContacto { get; set; }
         [Column("FechaCompra")]
         public DateTime FechaCompra { get; set; }
-        [Column("ID_CLASE")]
+        [Column("ID_TIPO_CLASE")]
         public int IdClase { get; set; }
     }
 }
