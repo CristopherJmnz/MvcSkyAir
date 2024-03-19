@@ -90,6 +90,12 @@
 <!-- Header Start -->
 <div class="container-fluid bg-breadcrumb">
     <div class="container text-center py-5" style="max-width: 1300px;">
+        @if (TempData["COMPRADO"] != null)
+        {
+            <div class="alert alert-info">
+                @TempData["COMPRADO"]
+            </div>
+        }
         <form method="post" asp-action="Vuelos" asp-controller="Vuelos" class="form-search-flights bg-white p-3 rounded-1 row row-cols-lg-auto g-3 align-items-center justify-content-center">
             <div class="col-12">
                 <div class="form-check">
@@ -208,8 +214,8 @@
                     </ul>
                 </div>
             </div>
-            
-            
+
+
             <datalist id="list-paises">
                 @foreach (CiudadView ciudad in Model)
                 {
@@ -274,10 +280,9 @@
 <div class="container-fluid ExploreTour py-5">
     <div class="container py-5">
         <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-            <h5 class="section-title px-3">Explore Tour</h5>
-            <h1 class="mb-4">The World</h1>
+            <h5 class="section-title px-3">Descubre</h5>
             <p class="mb-0">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
+                Descubre destinos exóticos, ciudades vibrantes y paisajes impresionantes con nuestra aerolínea. Desde playas de arena blanca hasta metrópolis llenas de historia y cultura, te llevamos a donde tus sueños te lleven. Con un servicio excepcional y una amplia red de vuelos, ¡tu próxima aventura comienza con nosotros!
             </p>
         </div>
         <div class="tab-class text-center">
@@ -298,7 +303,7 @@
                     <div class="row g-4">
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-1.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/argentina.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Weekend Tour</h5>
@@ -312,7 +317,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-2.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/budapesr.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Holiday Tour</h5>
@@ -326,7 +331,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-3.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/Italia_Roma.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Road Trip</h5>
@@ -341,7 +346,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-4.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/miami.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Historical Trip</h5>
@@ -355,7 +360,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-5.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/Bratislava.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Family Tour</h5>
@@ -370,7 +375,7 @@
                         </div>
                         <div class="col-md-6 col-lg-4">
                             <div class="national-item">
-                                <img src="img/explore-tour-6.jpg" class="img-fluid w-100 rounded" alt="Image">
+                                <img src="~/img/amsterdam.png" class="img-fluid w-100 rounded" alt="Image">
                                 <div class="national-content">
                                     <div class="national-info">
                                         <h5 class="text-white text-uppercase mb-2">Beach Tour</h5>
@@ -461,20 +466,4 @@
     </div>
 </div>
 <!-- Explore Tour Start -->
-<!-- Subscribe Start -->
-<div class="container-fluid subscribe py-5">
-    <div class="container text-center py-5">
-        <div class="mx-auto text-center" style="max-width: 900px;">
-            <h5 class="subscribe-title px-3">Subscribe</h5>
-            <h1 class="text-white mb-4">Our Newsletter</h1>
-            <p class="text-white mb-5">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.
-            </p>
-            <div class="position-relative mx-auto">
-                <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                <button type="button" class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 px-4 mt-2 me-2">Subscribe</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Subscribe End -->
+

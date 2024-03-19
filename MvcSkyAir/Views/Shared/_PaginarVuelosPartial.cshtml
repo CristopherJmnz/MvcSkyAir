@@ -1,0 +1,68 @@
+﻿@model ModelPaginacionVuelosView
+@{
+    int posicion = (int) ViewData["POSICION"];
+    int previous = (int)ViewData["ANTERIOR"];
+    int next = (int)ViewData["SIGUIENTE"];
+    int ultimo = (int)ViewData["ULTIMO"];
+    int numeroPagina = 1;
+}
+
+<table class="table table-dark text-center">
+    <thead>
+        <tr>
+            <th>Estado</th>
+            <th>Hora SALIDA</th>
+            <th>Hora Llegada</th>
+            <th>Origen</th>
+            <th>Destino</th>
+            <th>Asientos libres</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (VueloView vuelo in Model.Vuelos)
+        {
+            <tr>
+                @if (vuelo.Estado == "CANCELADO")
+                {
+                    <td class="text-danger">
+                        @vuelo.Estado
+                    </td>
+                }else if (vuelo.Estado == "VOLANDO")
+                {
+                    <td class="text-warning">
+                        @vuelo.Estado
+                    </td>
+                }
+                else if (vuelo.Estado == "PENDIENTE")
+                {
+                    <td class="text-info">
+                        @vuelo.Estado
+                    </td>
+                }
+                <td>@vuelo.FechaSalida.ToLongTimeString()</td>
+                <td>@vuelo.FechaLlegada.ToLongTimeString()</td>
+                <td>@vuelo.CiudadOrigen</td>
+                <td>@vuelo.CiudadDestino</td>
+                <td>@vuelo.CupoDisponible</td>
+                <td>
+                    @if (vuelo.Estado != "CANCELADO")
+                    {
+                        <a class="btn btn-danger" asp-action="CancelVuelo" asp-controller="Usuarios" asp-route-idVuelo="@vuelo.IdVuelo">Cancelar</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<nav class="d-flex justify-content-center">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" onclick="loadPaginacion(1)">Primero</a></li>
+        @for(int i=1;i<=Model.NumeroRegistros;i+=4)
+        {
+            <li class="page-item"><a class="page-link" onclick="loadPaginacion(@i)">@numeroPagina</a></li>
+            numeroPagina++;
+        }
+        <li class="page-item"><a class="page-link" onclick="loadPaginacion(@ultimo)">Ultimo</a></li>
+    </ul>
+</nav>

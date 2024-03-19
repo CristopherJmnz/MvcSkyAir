@@ -1,0 +1,49 @@
+﻿@model List<Ciudad>
+@{
+    Layout = "_PanelAdmin";
+    List<Avion> aviones = await this.repo.GetAvionesAsync();
+}
+<form method="post" class="container py-3 mb-5" style="background-color:#a4a4a41f;">
+    <div class="row h-100 shadow d-flex align-items-center justify-content-center p-4">
+        <div class="col d-flex flex-column align-items-center justify-content-center">
+            <div class="w-75 mb-3 px-3 mb-3">
+                <label class="fs-4 mb-3">ID_AVION</label>
+                <select name="idAvion" class="form-select">
+                    @foreach(Avion avion in aviones)
+                    {
+                        <option value="@avion.IdAvion">@avion.Modelo</option>
+                    }
+                </select>
+            </div>
+            <div class="w-75 mb-3 px-3">
+                <label class="fs-4 mb-3">Origen</label>
+                <select type="password" name="idOrigen" class="form-select">
+                    @foreach(Ciudad ciu in Model)
+                    {
+                        <option value="@ciu.IdCiudad">@ciu.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="w-75 mb-3 px-3">
+                <label class="fs-4 mb-3">Destino</label>
+                <select type="password" name="idDestino" class="form-select">
+                    @foreach (Ciudad ciu in Model)
+                    {
+                        <option value="@ciu.IdCiudad">@ciu.Nombre</option>
+                    }
+                </select>
+            </div>
+            <div class="w-75 mb-3 px-3">
+                <label class="fs-4 mb-3">Fecha Salida</label>
+                <input type="datetime-local" name="fechaSalida" class="form-control"/>
+            </div>
+            <div class="w-75 mb-3 px-3">
+                <label class="fs-4 mb-3">Precio</label>
+                <input type="number" name="precioEstandar" class="form-control" />
+            </div>
+                <input type="hidden" name="idEstado" value="1" class="form-control" />
+            
+            <button type="submit" class="btn btn-primary">Crear</button>
+        </div>
+    </div>
+</form>

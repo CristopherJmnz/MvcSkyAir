@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using MvcSkyAir.Data;
 using MvcSkyAir.Models;
+using System.Data;
 
 namespace MvcSkyAir.Repositories
 {
@@ -75,7 +77,59 @@ namespace MvcSkyAir.Repositories
 
         #endregion
 
+        #region CIUDADES
+
+        public async Task<List<Ciudad>> GetAllCiudadesAsync()
+        {
+            return await this.context.Ciudades.ToListAsync();
+        }
+
+
+        #endregion
+
+        #region AVIONES
+
+        public async Task<List<Avion>>GetAvionesAsync()
+        {
+            return await this.context.Aviones.ToListAsync();
+        }
+
+        #endregion
+
         #region VUELOSVIEW
+
+        public async Task<List<VueloView>> GetAllVuelosViewAsync()
+        {
+            return await this.context.VuelosView.ToListAsync();
+        }
+        public async Task<List<VueloView>> GetVuelosViewByContinente(int idContinente)
+        {
+            return null;
+        }
+        public async Task<List<VueloView>> GetVuelosViewByPais(int idPais)
+        {
+            return null;
+        }
+        public async Task<List<VueloView>> GetVuelosViewByCiudad(int idCiudad)
+        {
+            return null;
+        }
+
+        public async Task<ModelPaginacionVuelosView> GetVuelosPaginacion(int posicion)
+        {
+            
+                string sql = "SP_PAGINAR_VUELOS @posicion, @registros out";
+                SqlParameter pamPosicion = new SqlParameter("@posicion", posicion);
+                SqlParameter pamRegistros = new SqlParameter("@registros", -1);
+                pamRegistros.Direction = ParameterDirection.Output;
+                var consulta = this.context.VuelosView.FromSqlRaw(sql,pamPosicion, pamRegistros);
+                ModelPaginacionVuelosView model = new ModelPaginacionVuelosView
+                {
+                    Vuelos = await consulta.ToListAsync(),
+                    NumeroRegistros = (int)pamRegistros.Value
+                };
+                return model;
+        }
 
         public async Task<VueloView> FindVueloViewByIdAsync(int idVuelo)
         {
@@ -102,7 +156,38 @@ namespace MvcSkyAir.Repositories
 
         #endregion
 
+        #region VUELOS
 
+        public async Task<Vuelo> FindVueloByIdAsync(int idVuelo)
+        {
+            return await this.context.Vuelos
+                .FirstOrDefaultAsync(x => x.IdVuelo == idVuelo);
+        }
+        public async Task CreateVuelo
+    (int idAvion, int idOrigen, int idDestino,
+    DateTime fechaSalida, decimal precioEstandar, int idEstado)
+{
+    string sql = "EXEC SP_INSERT_VUELO @idavion, @idorigen, @iddestino, @fechasalida, @precioestandar, @idestado";
+    SqlParameter pamidAvion = new SqlParameter("@idavion", idAvion);
+    SqlParameter pamidOrigen = new SqlParameter("@idorigen", idOrigen);
+    SqlParameter pamidDestino = new SqlParameter("@iddestino", idDestino);
+    SqlParameter pamFechaSalida = new SqlParameter("@fechasalida", fechaSalida);
+    SqlParameter pamPrecio = new SqlParameter("@precioestandar", precioEstandar);
+    SqlParameter pamIdEstado = new SqlParameter("@idestado", idEstado);
+
+    // Asegúrate de que tu contexto esté configurado para usar el proveedor de SQL Server
+    await context.Database.ExecuteSqlRawAsync(sql, pamidAvion, pamidOrigen, pamidDestino, pamFechaSalida, pamPrecio, pamIdEstado);
+}
+
+
+        public async Task CancelarVuelo(int idVuelo)
+        {
+            Vuelo vuelo = await this.FindVueloByIdAsync(idVuelo);
+            vuelo.IdEstado = 3;
+            await this.context.SaveChangesAsync();
+        }
+
+        #endregion
 
         #region CLASES
 
@@ -184,6 +269,16 @@ namespace MvcSkyAir.Repositories
         {
             return await this.context.BilletesView
                 .FirstOrDefaultAsync(x => x.IdBillete == idBillete);
+        }
+
+        #endregion
+
+        #region USUARIOS
+
+        public async Task<Usuario> LogInEmpleadoAsync(string email, string password)
+        {
+            return await this.context.Usuarios
+                .FirstOrDefaultAsync(x=>x.Email==email && x.Password==password);
         }
 
         #endregion

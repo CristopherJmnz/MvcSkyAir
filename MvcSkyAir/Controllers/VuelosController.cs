@@ -37,6 +37,7 @@ namespace MvcSkyAir.Controllers
                     precio, nombre[i], documento[i], apellido[i], email[i],
                     telefonoContacto[i], idClase);
             }
+            TempData["COMPRADO"] = "TU COMPRA SE HA REALIZADO CORRECTAMENTE";
             return RedirectToAction("Index", "Home");
         }
 
@@ -61,12 +62,12 @@ namespace MvcSkyAir.Controllers
             };
             return PartialView("_AsientosPartial", model);
         }
-        public async Task<IActionResult> PasajerosPartial(int pasajeros)
+        public IActionResult PasajerosPartial(int pasajeros)
         {
             return PartialView("_PasajerosPartial", pasajeros);
         }
 
-        public async Task<IActionResult> PagoPartial(int pasajeros, List<string> asientos, string clase, int precio)
+        public IActionResult PagoPartial(int pasajeros, List<string> asientos, string clase, int precio)
         {
             ModelResumenPago model = new ModelResumenPago
             {
@@ -85,12 +86,7 @@ namespace MvcSkyAir.Controllers
             return Json(asientos);
         }
 
-        public async Task<IActionResult> EstadoDeVuelo()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> GestionarReserva()
+        public IActionResult GestionarReserva()
         {
             return View();
         }

@@ -1,0 +1,29 @@
+﻿@model List<VueloView>
+@{
+    Layout = "_PanelAdmin";
+}
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadPaginacion(1);
+        })
+        function loadPaginacion(posicion) {
+            $("#contVuelos").load("/Usuarios/PaginarVuelosPartial?posicion=" + posicion)
+        }
+    </script>
+}
+
+@if (TempData["BIENVENIDA"] != null)
+{
+    <div class="alert alert-info">
+    @TempData["BIENVENIDA"]
+    </div>
+}
+<a class="btn btn-primary"
+    asp-controller="Usuarios"
+    asp-action="CreateVuelo">
+    Crear Vuelo
+</a>
+<div class="container py-3" id="contVuelos">
+    
+</div>

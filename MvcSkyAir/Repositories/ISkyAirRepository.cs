@@ -26,9 +26,38 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region VUELOS VIEW
+        Task<List<VueloView>> GetAllVuelosViewAsync();
+        Task<List<VueloView>> GetVuelosViewByContinente(int idContinente);
+        Task<List<VueloView>> GetVuelosViewByPais(int idPais);
+        Task<List<VueloView>> GetVuelosViewByCiudad(int idCiudad);
+        Task<ModelPaginacionVuelosView> GetVuelosPaginacion(int posicion);
         Task<VueloView> FindVueloViewByIdAsync(int idVuelo);
         Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, int kids, int adultos);
         Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, DateTime fechaVuelta, int kids, int adultos);
+        #endregion
+
+        #region CIUDADES
+
+        Task<List<Ciudad>> GetAllCiudadesAsync();
+
+        #endregion
+
+        #region AVIONES
+
+        Task<List<Avion>> GetAvionesAsync();
+
+
+        #endregion
+
+
+        #region VUELOS
+        Task CancelarVuelo(int idVuelo);
+        Task<Vuelo> FindVueloByIdAsync(int idVuelo);
+
+        Task CreateVuelo
+            (int idAvion, int idOrigen, int idDestino,
+            DateTime fechaSalida, decimal precioEstandar, int idEstado);
+
         #endregion
 
         #region TIPO CLASES
@@ -50,6 +79,12 @@ namespace MvcSkyAir.Repositories
         #region BilleteVueloView
         Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(int idVuelo, string apellido);
         Task<BilleteVueloView> FindBilleteViewByIdAsync(int idBillete);
+        #endregion
+
+        #region USUARIOS
+
+        Task<Usuario> LogInEmpleadoAsync(string email, string password);
+
         #endregion
     }
 }

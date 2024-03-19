@@ -1,0 +1,64 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <title>@ViewData["Title"] - SkyAir</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- Icon Font Stylesheet -->
+    <script src="https://kit.fontawesome.com/87ad13e327.js" crossorigin="anonymous"></script>
+    <!-- Libraries Stylesheet -->
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="~/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="~/css/style.css" rel="stylesheet">
+    <link href="~/css/panel.css" rel="stylesheet">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <div class="container-fluid position-relative p-0" >
+        <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0 shadow" style="position:sticky!important;top:0;">
+            <a class="navbar-brand p-0"
+               asp-controller="Home"
+               asp-action="Index">
+                <img src="~/img/LOGO_CRIS_provisional.png" alt="Logo" style="filter:none">
+            </a>
+        </nav>
+    </div>
+    
+
+    <div class="cont">
+        <div class="h-100 bg-black">
+            <div class="sidebar">
+                <a asp-controller="Usuarios" asp-action="DataVuelos">
+                    <i class="fa-solid fa-plane-departure"></i>
+                    <span class="txt-option">Vuelos</span>
+                </a>
+                <a asp-action="Flota" asp-controller="Usuarios">
+                    <i class="fa-solid fa-plane-circle-exclamation"></i>
+                    <span class="txt-option">Flota</span>
+                </a>
+                <a asp-action="Logout" asp-controller="Managed">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="txt-option">Cerrar Sesion</span>
+                </a>
+            </div>
+        </div>
+        <div class="container px-5 py-3">
+            @RenderBody()
+        </div>
+    </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+
+<!-- Template Javascript -->
+<script src="~/js/main.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

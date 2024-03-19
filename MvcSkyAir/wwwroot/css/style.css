@@ -93,6 +93,9 @@
 .btn-hover:hover {
     color: var(--bs-secondary) !important;
 }
+.national-item img{
+    aspect-ratio:16/9;
+}
 
 /*** Section Title Start ***/
 .section-title {
