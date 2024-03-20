@@ -90,14 +90,14 @@ GO
 --    FROM Ciudades
 --    WHERE ID_CIUDAD = @IDDestino;
 
---    -- Calcular la distancia utilizando la f髍mula de Haversine
+--    -- Calcular la distancia utilizando la f贸rmula de Haversine
 --    SET @DistanciaKm = 12742 * ASIN(SQRT(
 --        POWER(SIN((@LatitudDestino - @LatitudOrigen) * PI() / 180 / 2), 2) +
 --        COS(@LatitudOrigen * PI() / 180) * COS(@LatitudDestino * PI() / 180) *
 --        POWER(SIN((@LongitudDestino - @LongitudOrigen) * PI() / 180 / 2), 2)
 --    ));
 
---    -- Obtener la velocidad del avi髇
+--    -- Obtener la velocidad del avi贸n
 --    SELECT @VelocidadAvion = Velocidad
 --    FROM Aviones
 --    WHERE ID_AVION = @IDAvion;
@@ -105,7 +105,7 @@ GO
 --    -- Calcular la fecha de llegada
 --    SET @FechaLlegada = DATEADD(HOUR, @DistanciaKm / @VelocidadAvion, @FechaSalida);
 
---    -- Obtener el cupo total de asientos del avi髇
+--    -- Obtener el cupo total de asientos del avi贸n
 --    SELECT @CupoTotal = CapacidadAsientos
 --    FROM Aviones
 --    WHERE ID_AVION = @IDAvion;
@@ -133,7 +133,7 @@ GO
 --    DECLARE @ID_VUELO INT, @FechaLlegada DATETIME, @CupoTotal INT, @VelocidadAvion DECIMAL(10, 2);
 --    DECLARE @HoraLlegadaLocal TIME;
 
---    -- Obtener la velocidad del avi髇
+--    -- Obtener la velocidad del avi贸n
 --    SELECT @VelocidadAvion = Velocidad
 --    FROM Aviones
 --    WHERE ID_AVION = @ID_AVION;
@@ -152,7 +152,7 @@ GO
 --    FROM Ciudades
 --    WHERE ID_CIUDAD = @ID_DESTINO;
 
---    -- Calcular la distancia utilizando la f髍mula de Haversine
+--    -- Calcular la distancia utilizando la f贸rmula de Haversine
 --    DECLARE @DistanciaKm DECIMAL(18, 2);
 --    SET @DistanciaKm = 12742 * ASIN(SQRT(
 --        POWER(SIN((@LatitudDestino - @LatitudOrigen) * PI() / 180 / 2), 2) +
@@ -160,17 +160,17 @@ GO
 --        POWER(SIN((@LongitudDestino - @LongitudOrigen) * PI() / 180 / 2), 2)
 --    ));
 
---    -- Calcular la hora de llegada local en el pa韘 de destino
+--    -- Calcular la hora de llegada local en el pa铆s de destino
 --    DECLARE @ZonaHorariaDestino INT;
 --    SELECT @ZonaHorariaDestino = ZH.Desplazamiento
 --    FROM Ciudades AS C
 --    JOIN ZonasHorarias AS ZH ON C.ID_ZonaHoraria = ZH.ID_ZonaHoraria
 --    WHERE C.ID_CIUDAD = @ID_DESTINO;
 
---    -- Calcular la hora de llegada en funci髇 de la zona horaria del pa韘 de destino
+--    -- Calcular la hora de llegada en funci贸n de la zona horaria del pa铆s de destino
 --    SET @HoraLlegadaLocal = DATEADD(HOUR, @DistanciaKm / @VelocidadAvion, DATEADD(HOUR, @ZonaHorariaDestino, @FechaSalida));
 
---    -- Obtener el cupo total del avi髇
+--    -- Obtener el cupo total del avi贸n
 --    SELECT @CupoTotal = CapacidadAsientos
 --    FROM Aviones
 --    WHERE ID_AVION = @ID_AVION;
@@ -201,7 +201,7 @@ BEGIN
     DECLARE @HoraLlegadaLocal DATETIME; -- Cambiado de TIME a DATETIME
 	-- maxid
 	select @id_vuelo=max(id_vuelo)+1 from vuelos;
-    -- Obtener la velocidad del avi髇
+    -- Obtener la velocidad del avi贸n
     SELECT @VelocidadAvion = Velocidad
     FROM Aviones
     WHERE ID_AVION = @ID_AVION;
@@ -216,7 +216,7 @@ BEGIN
     FROM Ciudades
     WHERE ID_CIUDAD = @ID_DESTINO;
 
-    -- Calcular la distancia utilizando la f髍mula de Haversine
+    -- Calcular la distancia utilizando la f贸rmula de Haversine
     DECLARE @DistanciaKm DECIMAL(18, 2);
     SET @DistanciaKm = 12742 * ASIN(SQRT(
         POWER(SIN((@LatitudDestino - @LatitudOrigen) * PI() / 180 / 2), 2) +
@@ -224,17 +224,17 @@ BEGIN
         POWER(SIN((@LongitudDestino - @LongitudOrigen) * PI() / 180 / 2), 2)
     ));
 
-    -- Calcular la hora de llegada local en el pa韘 de destino
+    -- Calcular la hora de llegada local en el pa铆s de destino
     DECLARE @ZonaHorariaDestino INT;
     SELECT @ZonaHorariaDestino = ZH.Desplazamiento
     FROM Ciudades AS C
     JOIN ZonasHorarias AS ZH ON C.ID_ZonaHoraria = ZH.ID_ZonaHoraria
     WHERE C.ID_CIUDAD = @ID_DESTINO;
 
-    -- Calcular la hora de llegada en funci髇 de la zona horaria del pa韘 de destino
+    -- Calcular la hora de llegada en funci贸n de la zona horaria del pa铆s de destino
     SET @HoraLlegadaLocal = DATEADD(HOUR, @DistanciaKm / @VelocidadAvion, DATEADD(HOUR, @ZonaHorariaDestino, @FechaSalida));
 
-    -- Obtener el cupo total del avi髇
+    -- Obtener el cupo total del avi贸n
     SELECT @CupoTotal = CapacidadAsientos
     FROM Aviones
     WHERE ID_AVION = @ID_AVION;
