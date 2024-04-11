@@ -2,6 +2,7 @@
 using MvcSkyAir.Models;
 using MvcSkyAir.Repositories;
 
+
 namespace MvcSkyAir.Controllers
 {
     public class VuelosController : Controller
@@ -36,6 +37,7 @@ namespace MvcSkyAir.Controllers
                     (idVuelo, equipajeMano, equipajeCabina, asientos[i],
                     precio, nombre[i], documento[i], apellido[i], email[i],
                     telefonoContacto[i], idClase);
+                await this.repo.RestarAsientoAsync(idVuelo);
             }
             TempData["COMPRADO"] = "TU COMPRA SE HA REALIZADO CORRECTAMENTE";
             return RedirectToAction("Index", "Home");

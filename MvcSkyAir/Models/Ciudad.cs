@@ -18,5 +18,9 @@ namespace MvcSkyAir.Models
         public int IdPais { get; set; }
         [Column("ID_ZonaHoraria")]
         public int IdZonaHoraria { get; set; }
+        [Column("DESCRIPCION")]
+        public string Descripcion { get; set; }
+        [Column("Imagen")]
+        public string Imagen { get; set; }
     }
 }

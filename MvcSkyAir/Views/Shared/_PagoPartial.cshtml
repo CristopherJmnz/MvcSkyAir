@@ -1,4 +1,7 @@
 ﻿@model ModelResumenPago
+@{
+    int importe = Model.Pasajeros * Model.Precio;
+}
 <div class="container row py-4">
     <div class="form-pago col-md-9 mb-3">
         <p class="fs-3">Datos de pago</p>
@@ -30,7 +33,7 @@
                 }
             </li>
             <li class="list-group-item"><span class="fw-bold">Clase: </span>@Model.Clase</li>
-            <li class="list-group-item"><span class="fw-bold">Importe Total:</span>@Model.Precio€</li>
+            <li class="list-group-item"><span class="fw-bold">Importe Total:</span>@importe€</li>
         </ul>
     </div>
 </div>  

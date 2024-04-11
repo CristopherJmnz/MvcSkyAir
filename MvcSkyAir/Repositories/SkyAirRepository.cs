@@ -4,6 +4,7 @@ using MvcSkyAir.Data;
 using MvcSkyAir.Models;
 using System.Data;
 
+public enum EstadosVuelo { Pendiente = 1, Volando = 2, Cancelado = 3, Aplazado = 4 }
 namespace MvcSkyAir.Repositories
 {
     public class SkyAirRepository : ISkyAirRepository
@@ -32,6 +33,11 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region Paises
+        public async Task<Pais> FindPaisByIdAsync(int idPais)
+        {
+            return await this.context.Paises
+                .FirstOrDefaultAsync(x => x.IdPais == idPais);
+        }
         public async Task<List<Pais>> GetAllPaisesAsync()
         {
             return await this.context.Paises.ToListAsync();
@@ -84,14 +90,39 @@ namespace MvcSkyAir.Repositories
             return await this.context.Ciudades.ToListAsync();
         }
 
+        public async Task<Ciudad> FindCiudadByIdAsync(int idCiudad)
+        {
+            return await this.context.Ciudades
+                .FirstOrDefaultAsync(x => x.IdCiudad == idCiudad);
+        }
 
         #endregion
 
         #region AVIONES
 
-        public async Task<List<Avion>>GetAvionesAsync()
+        public async Task<List<Avion>> GetAvionesAsync()
         {
             return await this.context.Aviones.ToListAsync();
+        }
+        public async Task<int> GetMaxAvionIdAsync()
+        {
+            if (this.context.Aviones.Count() == 0)
+                return 1;
+            else
+                return await this.context.Aviones.MaxAsync(x => x.IdAvion) + 1;
+        }
+
+        public async Task CreateAvion(string modelo,int capacidad,int velocidad )
+        {
+            Avion avion = new Avion()
+            {
+                IdAvion=await this.GetMaxAvionIdAsync(),
+                Capacidad=capacidad,
+                Modelo=modelo,
+                Velocidad=velocidad
+            };
+            await this.context.Aviones.AddAsync(avion);
+            await this.context.SaveChangesAsync();
         }
 
         #endregion
@@ -117,18 +148,18 @@ namespace MvcSkyAir.Repositories
 
         public async Task<ModelPaginacionVuelosView> GetVuelosPaginacion(int posicion)
         {
-            
-                string sql = "SP_PAGINAR_VUELOS @posicion, @registros out";
-                SqlParameter pamPosicion = new SqlParameter("@posicion", posicion);
-                SqlParameter pamRegistros = new SqlParameter("@registros", -1);
-                pamRegistros.Direction = ParameterDirection.Output;
-                var consulta = this.context.VuelosView.FromSqlRaw(sql,pamPosicion, pamRegistros);
-                ModelPaginacionVuelosView model = new ModelPaginacionVuelosView
-                {
-                    Vuelos = await consulta.ToListAsync(),
-                    NumeroRegistros = (int)pamRegistros.Value
-                };
-                return model;
+
+            string sql = "SP_PAGINAR_VUELOS @posicion, @registros out";
+            SqlParameter pamPosicion = new SqlParameter("@posicion", posicion);
+            SqlParameter pamRegistros = new SqlParameter("@registros", -1);
+            pamRegistros.Direction = ParameterDirection.Output;
+            var consulta = this.context.VuelosView.FromSqlRaw(sql, pamPosicion, pamRegistros);
+            ModelPaginacionVuelosView model = new ModelPaginacionVuelosView
+            {
+                Vuelos = await consulta.ToListAsync(),
+                NumeroRegistros = (int)pamRegistros.Value
+            };
+            return model;
         }
 
         public async Task<VueloView> FindVueloViewByIdAsync(int idVuelo)
@@ -145,7 +176,8 @@ namespace MvcSkyAir.Repositories
                 Where(x => x.IdOrigen == origin.IdCiudad
                 && x.IdDestino == destiny.IdCiudad
                 && x.FechaSalida.Day == fechaIda.Day
-                && x.CupoDisponible >= (kids + adultos)).ToListAsync();
+                && x.CupoDisponible >= (kids + adultos)
+                && x.Estado == "PENDIENTE").ToListAsync();
             return vuelos.Count == 0 ? null : vuelos;
         }
 
@@ -163,28 +195,54 @@ namespace MvcSkyAir.Repositories
             return await this.context.Vuelos
                 .FirstOrDefaultAsync(x => x.IdVuelo == idVuelo);
         }
+
+        public async Task RestarAsientoAsync(int idVuelo)
+        {
+            Vuelo vuelo = await this.FindVueloByIdAsync(idVuelo);
+            vuelo.CupoDisponible = vuelo.CupoDisponible - 1;
+            await this.context.SaveChangesAsync();
+        }
+
         public async Task CreateVuelo
     (int idAvion, int idOrigen, int idDestino,
     DateTime fechaSalida, decimal precioEstandar, int idEstado)
-{
-    string sql = "EXEC SP_INSERT_VUELO @idavion, @idorigen, @iddestino, @fechasalida, @precioestandar, @idestado";
-    SqlParameter pamidAvion = new SqlParameter("@idavion", idAvion);
-    SqlParameter pamidOrigen = new SqlParameter("@idorigen", idOrigen);
-    SqlParameter pamidDestino = new SqlParameter("@iddestino", idDestino);
-    SqlParameter pamFechaSalida = new SqlParameter("@fechasalida", fechaSalida);
-    SqlParameter pamPrecio = new SqlParameter("@precioestandar", precioEstandar);
-    SqlParameter pamIdEstado = new SqlParameter("@idestado", idEstado);
+        {
+            string sql = "EXEC SP_INSERT_VUELO @idavion, @idorigen, @iddestino, @fechasalida, @precioestandar, @idestado";
+            SqlParameter pamidAvion = new SqlParameter("@idavion", idAvion);
+            SqlParameter pamidOrigen = new SqlParameter("@idorigen", idOrigen);
+            SqlParameter pamidDestino = new SqlParameter("@iddestino", idDestino);
+            SqlParameter pamFechaSalida = new SqlParameter("@fechasalida", fechaSalida);
+            SqlParameter pamPrecio = new SqlParameter("@precioestandar", precioEstandar);
+            SqlParameter pamIdEstado = new SqlParameter("@idestado", idEstado);
 
-    // Asegúrate de que tu contexto esté configurado para usar el proveedor de SQL Server
-    await context.Database.ExecuteSqlRawAsync(sql, pamidAvion, pamidOrigen, pamidDestino, pamFechaSalida, pamPrecio, pamIdEstado);
-}
+            // Asegúrate de que tu contexto esté configurado para usar el proveedor de SQL Server
+            await context.Database.ExecuteSqlRawAsync(sql, pamidAvion, pamidOrigen, pamidDestino, pamFechaSalida, pamPrecio, pamIdEstado);
+        }
 
 
         public async Task CancelarVuelo(int idVuelo)
         {
             Vuelo vuelo = await this.FindVueloByIdAsync(idVuelo);
-            vuelo.IdEstado = 3;
+            vuelo.IdEstado = (int)EstadosVuelo.Cancelado;
             await this.context.SaveChangesAsync();
+        }
+
+        public async Task CambiarEstadoVuelo(int idVuelo, int idEstado)
+        {
+            Vuelo vuelo = await this.FindVueloByIdAsync(idVuelo);
+            vuelo.IdEstado = idEstado;
+            await this.context.SaveChangesAsync();
+        }
+
+        #endregion
+
+        #region ESTADOS
+
+        public async Task<List<EstadoVuelo>> GetEstadosVueloAsync()
+        {
+            var consulta = from datos in this.context.Estados
+                           select datos;
+            return await consulta.ToListAsync();
         }
 
         #endregion
@@ -198,7 +256,7 @@ namespace MvcSkyAir.Repositories
 
         public async Task<TipoClase> FindClaseAsync(int idClase)
         {
-            return await this.context.Clases.FirstOrDefaultAsync(x=>x.IdTipoClase==idClase);
+            return await this.context.Clases.FirstOrDefaultAsync(x => x.IdTipoClase == idClase);
         }
 
         #endregion
@@ -211,13 +269,15 @@ namespace MvcSkyAir.Repositories
             var consulta = from datos in this.context.Billetes
                            where datos.IdVuelo == idVuelo
                            select datos.Asiento;
-            var a=await consulta.ToListAsync();
-            return a;
+            return await consulta.ToListAsync();
         }
 
         public async Task<int> GetMaxBilleteIdAsync()
         {
-            return this.context.Billetes.Max(x => x.IdBillete) + 1;
+            if (this.context.Billetes.Count() == 0)
+                return 1;
+            else
+                return this.context.Billetes.Max(x => x.IdBillete) + 1;
         }
 
         public async Task CreateBilleteAsync
@@ -226,7 +286,7 @@ namespace MvcSkyAir.Repositories
             string email, string telefonoContacto, int idClase)
         {
             TipoClase clase = await this.FindClaseAsync(idClase);
-            if (equipajeCabina==0)
+            if (equipajeCabina == 0)
             {
                 equipajeCabina = clase.EquipajeCabina;
             }
@@ -248,10 +308,11 @@ namespace MvcSkyAir.Repositories
                 IdVuelo = idVuelo,
                 Nombre = nombre,
                 TelefonoContacto = telefonoContacto,
-                IdBillete= await this.GetMaxBilleteIdAsync()
+                IdBillete = await this.GetMaxBilleteIdAsync()
             };
             this.context.Billetes.Add(billete);
             await this.context.SaveChangesAsync();
+
         }
 
         #endregion
@@ -259,7 +320,7 @@ namespace MvcSkyAir.Repositories
 
         #region BilleteVueloView
 
-        public async Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(int idVuelo,string apellido)
+        public async Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(int idVuelo, string apellido)
         {
             return await this.context.BilletesView
                 .FirstOrDefaultAsync(x => x.IdVuelo == idVuelo && x.Apellido == apellido);
@@ -278,7 +339,7 @@ namespace MvcSkyAir.Repositories
         public async Task<Usuario> LogInEmpleadoAsync(string email, string password)
         {
             return await this.context.Usuarios
-                .FirstOrDefaultAsync(x=>x.Email==email && x.Password==password);
+                .FirstOrDefaultAsync(x => x.Email == email && x.Password == password);
         }
 
         #endregion

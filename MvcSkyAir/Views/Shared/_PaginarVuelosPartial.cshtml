@@ -5,6 +5,7 @@
     int next = (int)ViewData["SIGUIENTE"];
     int ultimo = (int)ViewData["ULTIMO"];
     int numeroPagina = 1;
+    List<EstadoVuelo> estados = await repo.GetEstadosVueloAsync();
 }
 
 <table class="table table-dark text-center">
@@ -30,11 +31,17 @@
                     </td>
                 }else if (vuelo.Estado == "VOLANDO")
                 {
-                    <td class="text-warning">
+                    <td class="text-success">
                         @vuelo.Estado
                     </td>
                 }
                 else if (vuelo.Estado == "PENDIENTE")
+                {
+                    <td class="text-warning">
+                        @vuelo.Estado
+                    </td>
+                }
+                else if (vuelo.Estado == "APLAZADO")
                 {
                     <td class="text-info">
                         @vuelo.Estado
@@ -46,9 +53,22 @@
                 <td>@vuelo.CiudadDestino</td>
                 <td>@vuelo.CupoDisponible</td>
                 <td>
+                    
                     @if (vuelo.Estado != "CANCELADO")
                     {
-                        <a class="btn btn-danger" asp-action="CancelVuelo" asp-controller="Usuarios" asp-route-idVuelo="@vuelo.IdVuelo">Cancelar</a>
+                        <form method="post" action="CambiarEstadoVuelo">
+                            <select class="form-select mb-3" name="idestado">
+                                @foreach (EstadoVuelo estado in estados)
+                                {
+                                    <option value="@estado.IdEstado">@estado.NombreEstado</option>
+                                }
+                            </select>
+                            <input type="hidden" name="idVuelo" value="@vuelo.IdVuelo" />
+                            <button class="btn btn-light" type="submit">Aplicar</button>
+                        </form>
+                        
+                        
+                        @* <a class="btn btn-danger" asp-action="CancelVuelo" asp-controller="Usuarios" asp-route-idVuelo="@vuelo.IdVuelo">Cancelar</a> *@
                     }
                 </td>
             </tr>

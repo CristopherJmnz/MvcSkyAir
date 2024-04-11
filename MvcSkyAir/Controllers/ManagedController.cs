@@ -47,7 +47,7 @@ namespace MvcSkyAir.Controllers
                     userPrincipal);
                 //LO VAMOS A LLEVAR A UNA VISTA QUE TODAVIA NO TENEMOS
                 //QUE SERA EL PERFIL DEL EMPLEADO
-                TempData["BIENVENIDA"]="Bienvenido" + user.Nombre;
+                TempData["BIENVENIDA"]="Bienvenido " + user.Nombre;
                 return RedirectToAction("DataVuelos", "Usuarios");
             }
             else

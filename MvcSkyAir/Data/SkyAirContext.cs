@@ -20,5 +20,6 @@ namespace MvcSkyAir.Data
         public DbSet<Billete> Billetes { get; set; }
         public DbSet<BilleteVueloView> BilletesView { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<EstadoVuelo> Estados{ get; set; }
     }
 }

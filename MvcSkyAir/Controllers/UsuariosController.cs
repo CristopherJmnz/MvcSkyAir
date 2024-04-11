@@ -68,10 +68,28 @@ namespace MvcSkyAir.Controllers
             await this.repo.CancelarVuelo(idVuelo);
             return RedirectToAction("DataVuelos");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CambiarEstadoVuelo(int idVuelo,int idestado)
+        {
+            await this.repo.CambiarEstadoVuelo(idVuelo,idestado);
+            return RedirectToAction("DataVuelos");
+        }
         public async Task<IActionResult> Flota()
         {
             List<Avion>aviones=await this.repo.GetAvionesAsync();
             return View(aviones);
+        }
+
+        public async Task<IActionResult> CreateAvion()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateAvion(Avion avion)
+        {
+            await this.repo.CreateAvion(avion.Modelo,avion.Capacidad,avion.Velocidad);
+            return RedirectToAction("Flota");
         }
 
 

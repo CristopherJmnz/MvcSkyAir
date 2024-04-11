@@ -17,5 +17,6 @@ namespace MvcSkyAir.Models
         public decimal Longitud { get; set; }
         [Column("ID_CONTINENTE")]
         public int IdContinente { get; set; }
+        
     }
 }

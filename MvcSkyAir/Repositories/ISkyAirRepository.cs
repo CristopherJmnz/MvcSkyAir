@@ -11,6 +11,7 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region PAISES
+        Task<Pais> FindPaisByIdAsync(int idPais);
         Task<List<Pais>> GetAllPaisesAsync();
         Task<List<Pais>> GetPaisesByContinenteAsync(int idContinente);
 
@@ -37,7 +38,7 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region CIUDADES
-
+        Task<Ciudad> FindCiudadByIdAsync(int idCiudad);
         Task<List<Ciudad>> GetAllCiudadesAsync();
 
         #endregion
@@ -45,19 +46,28 @@ namespace MvcSkyAir.Repositories
         #region AVIONES
 
         Task<List<Avion>> GetAvionesAsync();
-
+        Task CreateAvion(string modelo, int capacidad, int velocidad);
+        Task<int> GetMaxAvionIdAsync();
 
         #endregion
 
 
         #region VUELOS
         Task CancelarVuelo(int idVuelo);
+        Task CambiarEstadoVuelo(int idVuelo, int idEstado);
         Task<Vuelo> FindVueloByIdAsync(int idVuelo);
 
         Task CreateVuelo
             (int idAvion, int idOrigen, int idDestino,
             DateTime fechaSalida, decimal precioEstandar, int idEstado);
 
+        Task RestarAsientoAsync(int idVuelo);
+
+        #endregion
+
+        #region ESTADOS VUELO
+
+        Task<List<EstadoVuelo>> GetEstadosVueloAsync();
         #endregion
 
         #region TIPO CLASES

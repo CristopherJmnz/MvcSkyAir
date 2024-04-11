@@ -29,6 +29,11 @@ namespace MvcSkyAir.Controllers
             return View(ciudades);
         }
         
+        public async Task<IActionResult> Details(int idCiudad)
+        {
+            Ciudad ciudad = await this.repo.FindCiudadByIdAsync(idCiudad);
+            return View(ciudad);
+        }
 
     }
 }

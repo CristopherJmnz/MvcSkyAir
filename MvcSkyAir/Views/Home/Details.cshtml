@@ -1,0 +1,10 @@
+﻿@model Ciudad
+<div class="container py-5"></div>
+<div class="py-3 container text-center">
+    <p class="fs-1 mt-3 fw-bold">@Model.Nombre</p>
+    <img src="~/img/@Model.Imagen" style="aspect-ratio:16/9;" class="img-top"/>
+    <p class="fs-5 text-start mt-3">@Model.Descripcion</p>
+</div>
+@section Styles{
+    <link rel="stylesheet" href="~/css/details.css"/>
+}
