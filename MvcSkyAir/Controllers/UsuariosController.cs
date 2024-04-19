@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MvcSkyAir.Filters;
-using MvcSkyAir.Models;
+using NugetModelSkyAir.Models;
 using MvcSkyAir.Repositories;
 
 namespace MvcSkyAir.Controllers
@@ -52,7 +52,7 @@ namespace MvcSkyAir.Controllers
 
         public async Task<IActionResult> CreateVuelo()
         {
-            List<Ciudad> ciudades=await this.repo.GetAllCiudadesAsync();
+            List<CiudadView> ciudades=await this.repo.GetAllCiudadesViewAsync();
             return View(ciudades);
         }
 

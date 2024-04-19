@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
-using MvcSkyAir.Models;
+using NugetModelSkyAir.Models;
 using MvcSkyAir.Repositories;
 
 namespace MvcSkyAir.Controllers

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MvcSkyAir.Models;
+using NugetModelSkyAir.Models;
 using MvcSkyAir.Repositories;
 
 
@@ -37,7 +37,6 @@ namespace MvcSkyAir.Controllers
                     (idVuelo, equipajeMano, equipajeCabina, asientos[i],
                     precio, nombre[i], documento[i], apellido[i], email[i],
                     telefonoContacto[i], idClase);
-                await this.repo.RestarAsientoAsync(idVuelo);
             }
             TempData["COMPRADO"] = "TU COMPRA SE HA REALIZADO CORRECTAMENTE";
             return RedirectToAction("Index", "Home");
@@ -94,9 +93,9 @@ namespace MvcSkyAir.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GestionarReserva(string apellido, int idVuelo)
+        public async Task<IActionResult> GestionarReserva(string apellido, string codvuelo)
         {
-            BilleteVueloView billeteView = await this.repo.FindBilleteViewByApellidoAndIdVueloAsync(idVuelo, apellido);
+            BilleteVueloView billeteView = await this.repo.FindBilleteViewByApellidoAndIdVueloAsync(codvuelo, apellido);
             if (billeteView != null)
             {
                 return RedirectToAction("DetallesViaje", new { idBillete = billeteView.IdBillete });

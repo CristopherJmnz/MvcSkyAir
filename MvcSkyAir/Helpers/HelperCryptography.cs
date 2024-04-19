@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace MvcCoreUtilidades.Helpers
+namespace MvcSkyAir.Helpers
 {
     public class HelperCryptography
     {

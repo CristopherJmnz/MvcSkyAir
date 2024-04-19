@@ -1,4 +1,4 @@
-﻿using MvcSkyAir.Models;
+﻿using NugetModelSkyAir.Models;
 
 namespace MvcSkyAir.Repositories
 {
@@ -11,30 +11,41 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region PAISES
-        Task<Pais> FindPaisByIdAsync(int idPais);
         Task<List<Pais>> GetAllPaisesAsync();
+        Task<Pais> FindPaisByIdAsync(int idPais);
         Task<List<Pais>> GetPaisesByContinenteAsync(int idContinente);
 
         #endregion
 
         #region CIUDADES VIEW
-        Task<List<CiudadView>> GetAllCiudadesViewAsync();
-        Task<List<CiudadView>> GetCiudadesViewByContinenteAsync(int idContinente);
-        Task<CiudadView> FindCiudadViewByIdAsync(int idCiudad);
-        Task<CiudadView> FindCiudadViewByNameAsync(string nombre);
+        Task<List<CiudadView>>
+            GetAllCiudadesViewAsync();
+        Task<List<CiudadView>>
+            GetCiudadesViewByContinenteAsync(int idContinente);
+        Task<CiudadView>
+            FindCiudadViewByIdAsync(int idCiudad);
+        Task<CiudadView>
+            FindCiudadViewByNameAsync(string nombre);
 
 
         #endregion
 
         #region VUELOS VIEW
         Task<List<VueloView>> GetAllVuelosViewAsync();
-        Task<List<VueloView>> GetVuelosViewByContinente(int idContinente);
+        Task<List<VueloView>> GetVuelosViewByContinente
+            (int idContinente);
         Task<List<VueloView>> GetVuelosViewByPais(int idPais);
-        Task<List<VueloView>> GetVuelosViewByCiudad(int idCiudad);
-        Task<ModelPaginacionVuelosView> GetVuelosPaginacion(int posicion);
+        Task<List<VueloView>> GetVuelosViewByCiudad
+            (int idCiudad);
+        Task<ModelPaginacionVuelosView> GetVuelosPaginacion
+            (int posicion);
         Task<VueloView> FindVueloViewByIdAsync(int idVuelo);
-        Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, int kids, int adultos);
-        Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, DateTime fechaVuelta, int kids, int adultos);
+        Task<List<VueloView>> SearchVueloAsync
+            (string origen, string destino, DateTime fechaIda,
+            int kids, int adultos);
+        Task<List<VueloView>> SearchVueloAsync
+            (string origen, string destino, DateTime fechaIda,
+            DateTime fechaVuelta, int kids, int adultos);
         #endregion
 
         #region CIUDADES
@@ -63,6 +74,8 @@ namespace MvcSkyAir.Repositories
 
         Task RestarAsientoAsync(int idVuelo);
 
+        Task<int> GetMaxIdVuelo();
+
         #endregion
 
         #region ESTADOS VUELO
@@ -87,7 +100,7 @@ namespace MvcSkyAir.Repositories
         #endregion
 
         #region BilleteVueloView
-        Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(int idVuelo, string apellido);
+        Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(string codVuelo, string apellido);
         Task<BilleteVueloView> FindBilleteViewByIdAsync(int idBillete);
         #endregion
 

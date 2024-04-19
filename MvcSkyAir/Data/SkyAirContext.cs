@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MvcSkyAir.Models;
+using NugetModelSkyAir.Models;
 
 namespace MvcSkyAir.Data
 {

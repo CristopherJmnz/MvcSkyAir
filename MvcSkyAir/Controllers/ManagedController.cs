@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using MvcSkyAir.Repositories;
-using MvcSkyAir.Models;
+using NugetModelSkyAir.Models;
 
 namespace MvcSkyAir.Controllers
 {

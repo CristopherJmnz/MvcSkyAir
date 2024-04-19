@@ -1,6 +1,6 @@
-﻿@model List<Ciudad>
+﻿@model List<CiudadView>
 @{
-    Layout = "_PanelAdmin";
+    Layout = "_PanelAdminLayout";
     List<Avion> aviones = await this.repo.GetAvionesAsync();
 }
 <form method="post" class="container py-3 mb-5" style="background-color:#a4a4a41f;">
@@ -18,7 +18,7 @@
             <div class="w-75 mb-3 px-3">
                 <label class="fs-4 mb-3">Origen</label>
                 <select type="password" name="idOrigen" class="form-select">
-                    @foreach(Ciudad ciu in Model)
+                    @foreach (CiudadView ciu in Model)
                     {
                         <option value="@ciu.IdCiudad">@ciu.Nombre</option>
                     }
@@ -27,7 +27,7 @@
             <div class="w-75 mb-3 px-3">
                 <label class="fs-4 mb-3">Destino</label>
                 <select type="password" name="idDestino" class="form-select">
-                    @foreach (Ciudad ciu in Model)
+                    @foreach (CiudadView ciu in Model)
                     {
                         <option value="@ciu.IdCiudad">@ciu.Nombre</option>
                     }
