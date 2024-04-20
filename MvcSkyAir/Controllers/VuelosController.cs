@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NugetModelSkyAir.Models;
 using MvcSkyAir.Repositories;
+using DinkToPdf.Contracts;
+using DinkToPdf;
+using Microsoft.AspNetCore.Http.Extensions;
+using System;
 
 
 namespace MvcSkyAir.Controllers
@@ -8,9 +12,10 @@ namespace MvcSkyAir.Controllers
     public class VuelosController : Controller
     {
         private ISkyAirRepository repo;
-
-        public VuelosController(ISkyAirRepository repo)
+        private IConverter converter;
+        public VuelosController(ISkyAirRepository repo, IConverter converter)
         {
+            this.converter = converter;
             this.repo = repo;
         }
         public IActionResult Vuelos()
@@ -80,6 +85,14 @@ namespace MvcSkyAir.Controllers
             return PartialView("_PagoPartial", model);
         }
 
+
+        public async Task<IActionResult> BilletePartial(int idBillete)
+        {
+            BilleteVueloView billete=await this.repo
+                .FindBilleteViewByIdAsync(idBillete);
+            return PartialView("_BilletePartial", billete);
+        }
+
         public async Task<ActionResult> ObtenerAsientos(int idVuelo)
         {
             // Tu lógica para obtener la capacidad del vuelo
@@ -110,6 +123,39 @@ namespace MvcSkyAir.Controllers
         {
             BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
             return View(billeteView);
+        }
+
+        public async Task<IActionResult>BilleteToPdf(int idBillete)
+        {
+            BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
+            return View(billeteView);
+        }
+
+        public IActionResult DescargarPDF(int idBillete)
+        {
+            string pagina_actual = HttpContext.Request.Path + "?idBillete=" + idBillete;
+            string url_pagina = HttpContext.Request.GetEncodedUrl();
+            url_pagina = url_pagina.Replace(pagina_actual, "");
+            url_pagina = $"{url_pagina}/Vuelos/BilleteToPdf?idBillete=" + idBillete;
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = new GlobalSettings()
+                {
+                    PaperSize = PaperKind.A4,
+                    Orientation = Orientation.Portrait
+                },
+                Objects = {
+                    new ObjectSettings(){
+                        Page = url_pagina
+                    }
+                }
+            };
+
+            var archivoPDF = this.converter.Convert(pdf);
+            string nombrePDF = "Billete_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".pdf";
+
+            return File(archivoPDF, "application/pdf", nombrePDF);
         }
     }
 }

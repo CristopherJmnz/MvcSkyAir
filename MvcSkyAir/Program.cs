@@ -1,11 +1,19 @@
+using DinkToPdf.Contracts;
+using DinkToPdf;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MvcSkyAir.Data;
+using MvcSkyAir.Extensions;
 using MvcSkyAir.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//PDF LIB
+var context = new CustomAssemblyLoadContext();
+context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "PdfLibrarie/libwkhtmltox.dll"));
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
+
 builder.Services.AddControllersWithViews(options=>options.EnableEndpointRouting=false);
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();

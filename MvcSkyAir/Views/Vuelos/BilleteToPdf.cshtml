@@ -1,0 +1,13 @@
+﻿@model BilleteVueloView
+@{
+    Layout = "";
+}
+<div id="content">
+
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#content").load("/Vuelos/BilletePartial?idBillete=" + @Model.IdBillete)
+    })
+</script>
