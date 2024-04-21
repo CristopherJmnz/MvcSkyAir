@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using MvcSkyAir.Data;
 using MvcSkyAir.Extensions;
 using MvcSkyAir.Repositories;
+using MvcSkyAir.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
 builder.Services.AddAntiforgery();
 builder.Services.AddTransient<ISkyAirRepository,SkyAirRepository>();
+builder.Services.AddTransient<ISkyAirRepository,SkyAirService>();
 string connectionString = builder.Configuration.GetConnectionString("SkyAirSqlServer");
 builder.Services.AddDbContext<SkyAirContext>(options=>options.UseSqlServer(connectionString));
 builder.Services.AddAuthentication(options =>

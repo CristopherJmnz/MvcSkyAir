@@ -9,10 +9,14 @@ namespace MvcSkyAir.Controllers
     {
         private ISkyAirRepository repo;
         private IMemoryCache memoryCache;
-        public HomeController(ISkyAirRepository repo, IMemoryCache memoryCache)
+        private ISkyAirRepository service;
+        public HomeController(ISkyAirRepository repo,
+            IMemoryCache memoryCache,
+            ISkyAirRepository service)
         {
             this.repo = repo;
             this.memoryCache = memoryCache;
+            this.service = service;
         }
         public async Task<IActionResult> Index()
         {
@@ -23,7 +27,7 @@ namespace MvcSkyAir.Controllers
             }
             else
             {
-                ciudades = await this.repo.GetAllCiudadesViewAsync();
+                ciudades = await this.service.GetAllCiudadesViewAsync();
                 this.memoryCache.Set("CIUDADES", ciudades);
             }
             return View(ciudades);
@@ -31,7 +35,7 @@ namespace MvcSkyAir.Controllers
         
         public async Task<IActionResult> Details(int idCiudad)
         {
-            Ciudad ciudad = await this.repo.FindCiudadByIdAsync(idCiudad);
+            Ciudad ciudad = await this.service.FindCiudadByIdAsync(idCiudad);
             return View(ciudad);
         }
 

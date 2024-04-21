@@ -1,17 +1,7 @@
-﻿@model BilleteVueloView
+﻿@model List<BilleteVueloView>
 
 @{
     Layout = "";
-    string minutosSalida = Model.FechaSalida.TimeOfDay.Minutes.ToString();
-    string minutosLlegada = Model.FechaLlegada.TimeOfDay.Minutes.ToString();
-    if (minutosLlegada == "0")
-    {
-        minutosLlegada = "00";
-    }
-    if (minutosSalida == "0")
-    {
-        minutosSalida = "00";
-    }
 }
 <style>
     body {
@@ -78,6 +68,17 @@
 
 </style>
 
+@foreach(BilleteVueloView billete in Model){
+    string minutosSalida = billete.FechaSalida.TimeOfDay.Minutes.ToString();
+    string minutosLlegada = billete.FechaLlegada.TimeOfDay.Minutes.ToString();
+    if (minutosLlegada == "0")
+    {
+        minutosLlegada = "00";
+    }
+    if (minutosSalida == "0")
+    {
+        minutosSalida = "00";
+    }
 <div class="ticket">
     <div class="header">
         <img src="~/img/SkyAir-logo-black.png" alt="SkyAir" class="logo">
@@ -85,70 +86,63 @@
     <div class="flight-info">
         <div class="flight-row">
             <div class="label">Número de Vuelo:</div>
-            <div class="value">@Model.CodVuelo</div>
+            <div class="value">@billete.CodVuelo</div>
         </div>
         <div class="flight-row">
             <div class="label">Origen:</div>
-            <div class="value">@Model.CiudadOrigen</div>
+            <div class="value">@billete.CiudadOrigen</div>
         </div>
         <div class="flight-row">
             <div class="label">Destino:</div>
-            <div class="value">@Model.CiudadDestino</div>
+            <div class="value">@billete.CiudadDestino</div>
         </div>
         <div class="flight-row">
             <div class="label">Salida:</div>
             <div class="value">
-                @Model.FechaSalida.ToLongDateString() @Model.FechaSalida.TimeOfDay.Hours:@minutosSalida
+                @billete.FechaSalida.ToLongDateString() @billete.FechaSalida.TimeOfDay.Hours:@minutosSalida
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Llegada:</div>
             <div class="value">
-                @Model.FechaLlegada.ToLongDateString()  @Model.FechaLlegada.TimeOfDay.Hours:@minutosLlegada
+                @billete.FechaLlegada.ToLongDateString()  @billete.FechaLlegada.TimeOfDay.Hours:@minutosLlegada
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Clase:</div>
             <div class="value">
-                @Model.Clase
+                    @billete.Clase
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Asiento</div>
             <div class="value">
-                @Model.Asiento
+                    @billete.Asiento
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Equipaje Cabina</div>
             <div class="value">
-                @Model.EquipajeCabina
+                    @billete.EquipajeCabina
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Equipaje Mano</div>
             <div class="value">
-                @Model.EquipajeMano
+                    @billete.EquipajeMano
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Avion</div>
             <div class="value">
-                @Model.Avion
+                @billete.Avion
             </div>
         </div>
         <div class="flight-row">
             <div class="label">Compra realizada</div>
             <div class="value">
-                @Model.FechaCompra
+                    @billete.FechaCompra
             </div>
-        </div>
-        <div class="text-center">
-            <a class="btn btn-primary"
-               asp-controller="Vuelos"
-               asp-action="DescargarPDF"
-               asp-route-idBillete="@Model.IdBillete">Descargar PDF</a>
-
         </div>
     </div>
     
@@ -156,3 +150,5 @@
         <!-- Código de barras aquí -->
     </div>
 </div>
+}
+

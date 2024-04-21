@@ -1,13 +1,162 @@
-﻿@model BilleteVueloView
+﻿@model List<BilleteVueloView>
 @{
     Layout = "";
+    string requestparams = "";
+    
+    foreach(BilleteVueloView billete in Model)
+    {
+        requestparams += "idBillete=" + billete.IdBillete + "&";
+    }
+    requestparams = requestparams.TrimEnd('&');
 }
-<div id="content">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+    }
 
+    .ticket {
+        width: 800px;
+        height:300vh;
+        /* max-width: 500px; */
+        margin: 50px auto;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .logo {
+        width: 80px;
+        margin-right: 20px;
+    }
+
+    .title {
+        font-size: 24px;
+        margin: 0;
+        color: #333;
+    }
+
+    .flight-info {
+        padding: 20px 0;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .flight-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .label {
+        font-weight: bold;
+    }
+
+    .barcode {
+        padding-top: 20px;
+        text-align: center;
+    }
+
+        /* Simular código de barras */
+        .barcode::before {
+            content: "||||||||||||||||||||||||||||||||||||";
+            font-size: 20px;
+            color: #333;
+        }
+
+</style>
+<div id="content">
+    @foreach (BilleteVueloView billete in Model)
+    {
+        string minutosSalida = billete.FechaSalida.TimeOfDay.Minutes.ToString();
+        string minutosLlegada = billete.FechaLlegada.TimeOfDay.Minutes.ToString();
+        if (minutosLlegada == "0")
+        {
+            minutosLlegada = "00";
+        }
+        if (minutosSalida == "0")
+        {
+            minutosSalida = "00";
+        }
+        <div class="ticket">
+            <div class="header">
+                <img src="~/img/SkyAir-logo-black.png" alt="SkyAir" class="logo">
+            </div>
+            <div class="flight-info">
+                <div class="flight-row">
+                    <div class="label">Número de Vuelo:</div>
+                    <div class="value">@billete.CodVuelo</div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Origen:</div>
+                    <div class="value">@billete.CiudadOrigen</div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Destino:</div>
+                    <div class="value">@billete.CiudadDestino</div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Salida:</div>
+                    <div class="value">
+                        @billete.FechaSalida.ToLongDateString() @billete.FechaSalida.TimeOfDay.Hours:@minutosSalida
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Llegada:</div>
+                    <div class="value">
+                        @billete.FechaLlegada.ToLongDateString()  @billete.FechaLlegada.TimeOfDay.Hours:@minutosLlegada
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Clase:</div>
+                    <div class="value">
+                        @billete.Clase
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Asiento</div>
+                    <div class="value">
+                        @billete.Asiento
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Equipaje Cabina</div>
+                    <div class="value">
+                        @billete.EquipajeCabina
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Equipaje Mano</div>
+                    <div class="value">
+                        @billete.EquipajeMano
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Avion</div>
+                    <div class="value">
+                        @billete.Avion
+                    </div>
+                </div>
+                <div class="flight-row">
+                    <div class="label">Compra realizada</div>
+                    <div class="value">
+                        @billete.FechaCompra
+                    </div>
+                </div>
+            </div>
+
+            <div class="barcode">
+                <!-- Código de barras aquí -->
+            </div>
+        </div>
+    }
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $("#content").load("/Vuelos/BilletePartial?idBillete=" + @Model.IdBillete)
-    })
-</script>

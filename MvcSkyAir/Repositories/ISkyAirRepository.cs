@@ -91,7 +91,7 @@ namespace MvcSkyAir.Repositories
 
         #region BILLETES
         Task<int> GetMaxBilleteIdAsync();
-        Task CreateBilleteAsync
+        Task<Billete> CreateBilleteAsync
             (int idVuelo, int equipajeMano, int equipajeCabina, string asiento,
             decimal precio, string nombre, string documento, string apellido,
             string email, string telefonoContacto, int idClase);
@@ -102,6 +102,7 @@ namespace MvcSkyAir.Repositories
         #region BilleteVueloView
         Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(string codVuelo, string apellido);
         Task<BilleteVueloView> FindBilleteViewByIdAsync(int idBillete);
+        Task<List<BilleteVueloView>> GetBilletesViewById(List<int> idBilletes);
         #endregion
 
         #region USUARIOS

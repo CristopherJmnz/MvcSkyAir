@@ -152,12 +152,10 @@
             let precio = $("#precio").val();
             let asientos = $(".asiento:checked");
             asientos.each(function () {
-                console.log($(this).val())
                 asientosUrl += $(this).val() + "," ;
             });
             asientosUrl=asientosUrl.substring(0, asientosUrl.length - 1);
             let url = "/Vuelos/PagoPartial?pasajeros=" + pasajeros + asientosUrl + "&clase=" + clase + "&precio=" + precio
-            console.log(url);
             $("#pago").load(url, function () {
 
             });
@@ -224,7 +222,7 @@
                                 TimeSpan diferenciaVuelo = @vuelo.FechaLlegada.Subtract(vuelo.FechaSalida);
                                 <div class="flight-card card px-3 py-1 shadow mb-5" style="min-height: 200px">
                                     <div class="card-logo" style="width:auto;">
-                                        <img src="~/img/LOGO_CRIS_provisional.png" class="img-fluid" />
+                                        <img src="~/img/SkyAir-logo-black.png" class="img-fluid" />
                                     </div>
                                     <div class="card-flight-body">
                                         <div class="text-center data">

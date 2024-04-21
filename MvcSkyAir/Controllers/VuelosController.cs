@@ -36,15 +36,17 @@ namespace MvcSkyAir.Controllers
             decimal precio, List<string> nombre, List<string> documento, List<string> apellido,
             List<string> email, List<string> telefonoContacto, int idClase)
         {
+            List<int>idBilletes=new List<int>();
             for (int i = 0; i < nombre.Count; i++)
             {
-                await this.repo.CreateBilleteAsync
+                Billete billete=await this.repo.CreateBilleteAsync
                     (idVuelo, equipajeMano, equipajeCabina, asientos[i],
                     precio, nombre[i], documento[i], apellido[i], email[i],
                     telefonoContacto[i], idClase);
+                idBilletes.Add(billete.IdBillete);
             }
             TempData["COMPRADO"] = "TU COMPRA SE HA REALIZADO CORRECTAMENTE";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("DetallesViaje",idBilletes);
         }
 
         public async Task<IActionResult> Clases(int idVuelo)
@@ -86,11 +88,10 @@ namespace MvcSkyAir.Controllers
         }
 
 
-        public async Task<IActionResult> BilletePartial(int idBillete)
+        public async Task<IActionResult> BilletesPartial(List<int>idBillete)
         {
-            BilleteVueloView billete=await this.repo
-                .FindBilleteViewByIdAsync(idBillete);
-            return PartialView("_BilletePartial", billete);
+            List<BilleteVueloView> billetes = await this.repo.GetBilletesViewById(idBillete);
+            return PartialView("_BilletePartial", billetes);
         }
 
         public async Task<ActionResult> ObtenerAsientos(int idVuelo)
@@ -119,31 +120,40 @@ namespace MvcSkyAir.Controllers
             }
         }
 
-        public async Task<IActionResult> DetallesViaje(int idBillete)
+        //public async Task<IActionResult> DetallesViaje(int idBillete)
+        //{
+        //    BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
+        //    return View(billeteView);
+        //}
+
+        public async Task<IActionResult> DetallesViaje(List<int> idBillete)
         {
-            BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
-            return View(billeteView);
+            List<BilleteVueloView> billetes = await this.repo.GetBilletesViewById(idBillete);
+            return View(billetes);
         }
 
-        public async Task<IActionResult>BilleteToPdf(int idBillete)
+        public async Task<IActionResult>BilleteToPdf(List<int> idBillete)
         {
-            BilleteVueloView billeteView = await this.repo.FindBilleteViewByIdAsync(idBillete);
-            return View(billeteView);
+            List<BilleteVueloView> billetes = await this.repo.GetBilletesViewById(idBillete);
+            return View(billetes);
         }
 
-        public IActionResult DescargarPDF(int idBillete)
+        public IActionResult DescargarPDF(string url)
         {
-            string pagina_actual = HttpContext.Request.Path + "?idBillete=" + idBillete;
+            string pagina_actual = HttpContext.Request.Path + "?" + url;
             string url_pagina = HttpContext.Request.GetEncodedUrl();
-            url_pagina = url_pagina.Replace(pagina_actual, "");
-            url_pagina = $"{url_pagina}/Vuelos/BilleteToPdf?idBillete=" + idBillete;
+            List<string> stringGood = url_pagina.Split('/').ToList();
+
+            url_pagina = url_pagina.Replace(stringGood.ElementAt(4), "");
+            url_pagina = $"{url_pagina}BilleteToPdf?" + url;
 
             var pdf = new HtmlToPdfDocument()
             {
                 GlobalSettings = new GlobalSettings()
                 {
                     PaperSize = PaperKind.A4,
-                    Orientation = Orientation.Portrait
+                    Orientation = Orientation.Portrait,
+                    
                 },
                 Objects = {
                     new ObjectSettings(){

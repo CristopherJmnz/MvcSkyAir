@@ -302,7 +302,7 @@ namespace MvcSkyAir.Repositories
                 return this.context.Billetes.Max(x => x.IdBillete) + 1;
         }
 
-        public async Task CreateBilleteAsync
+        public async Task<Billete> CreateBilleteAsync
             (int idVuelo, int equipajeMano, int equipajeCabina, string asiento,
             decimal precio, string nombre, string documento, string apellido,
             string email, string telefonoContacto, int idClase)
@@ -332,15 +332,26 @@ namespace MvcSkyAir.Repositories
                 TelefonoContacto = telefonoContacto,
                 IdBillete = await this.GetMaxBilleteIdAsync()
             };
-            this.context.Billetes.Add(billete);
+            await this.context.Billetes.AddAsync(billete);
             await this.context.SaveChangesAsync();
             await this.RestarAsientoAsync(idVuelo);
+            return billete;
         }
+
 
         #endregion
 
 
         #region BilleteVueloView
+        public async Task<List<BilleteVueloView>> GetBilletesViewById(List<int> idBilletes)
+        {
+            List<BilleteVueloView> billetes = new List<BilleteVueloView>();
+            foreach (int id in idBilletes)
+            {
+                billetes.Add(await this.FindBilleteViewByIdAsync(id));
+            }
+            return billetes;
+        }
 
         public async Task<BilleteVueloView>
             FindBilleteViewByApellidoAndIdVueloAsync

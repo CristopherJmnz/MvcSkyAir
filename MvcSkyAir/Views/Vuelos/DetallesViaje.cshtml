@@ -1,4 +1,13 @@
-﻿@model BilleteVueloView
+﻿@model List<BilleteVueloView>
+@{
+    string url = "";
+    foreach(BilleteVueloView bill in Model)
+    {
+        url += "idBillete=" + bill.IdBillete + "&";
+    }
+    url = url.TrimEnd('&');
+    
+}
 <style>
     .navbar-brand img {
         filter:none !important
@@ -9,11 +18,36 @@
     }
 </style>
 <div class="container py-5"></div>
+@if (TempData["COMPRADO"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["COMPRADO"]
+    </div>
+}
+<div class="text-center">
+    <a class="btn btn-primary"
+       asp-controller="Vuelos"
+       asp-action="DescargarPDF"
+       asp-route-url=@url>Descargar PDF</a>
+</div>
 <div id="content">
 </div>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
+@{
+    string requestparams = "";
+    
+    foreach(BilleteVueloView billete in Model)
+    {
+        requestparams += "idBillete=" + billete.IdBillete + "&";
+    }
+    requestparams = requestparams.TrimEnd('&');
+}
+
 <script>
     $(document).ready(function () {
-        $("#content").load("/Vuelos/BilletePartial?idBillete=" + @Model.IdBillete)
-    })
+        
+        let url = "@requestparams";
+        url = url.replaceAll("amp;", "");
+        $("#content").load("/Vuelos/BilletesPartial?" + url)
+    });
 </script>
