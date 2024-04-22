@@ -46,7 +46,7 @@ namespace MvcSkyAir.Controllers
                 idBilletes.Add(billete.IdBillete);
             }
             TempData["COMPRADO"] = "TU COMPRA SE HA REALIZADO CORRECTAMENTE";
-            return RedirectToAction("DetallesViaje",idBilletes);
+            return RedirectToAction("DetallesViaje", new { idBillete= idBilletes });
         }
 
         public async Task<IActionResult> Clases(int idVuelo)
@@ -116,6 +116,8 @@ namespace MvcSkyAir.Controllers
             }
             else
             {
+                ViewData["MENSAJE"] = "No se encuentra ninguna reserva con el apellido " +
+                      apellido + " y código de vuelo " + codvuelo;
                 return View();
             }
         }

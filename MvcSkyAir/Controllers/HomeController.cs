@@ -7,14 +7,12 @@ namespace MvcSkyAir.Controllers
 {
     public class HomeController : Controller
     {
-        private ISkyAirRepository repo;
         private IMemoryCache memoryCache;
         private ISkyAirRepository service;
-        public HomeController(ISkyAirRepository repo,
+        public HomeController(
             IMemoryCache memoryCache,
             ISkyAirRepository service)
         {
-            this.repo = repo;
             this.memoryCache = memoryCache;
             this.service = service;
         }

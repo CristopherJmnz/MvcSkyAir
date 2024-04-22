@@ -1,28 +1,40 @@
 ﻿@model List<BilleteVueloView>
 @{
     string url = "";
-    foreach(BilleteVueloView bill in Model)
+    foreach (BilleteVueloView bill in Model)
     {
         url += "idBillete=" + bill.IdBillete + "&";
     }
     url = url.TrimEnd('&');
-    
+
 }
+
+
 <style>
     .navbar-brand img {
-        filter:none !important
+        filter: none !important
     }
 
     .navbar-light .navbar-nav .nav-link {
-        color:black !important
+        color: black !important
     }
 </style>
 <div class="container py-5"></div>
 @if (TempData["COMPRADO"] != null)
 {
-    <div class="alert alert-info">
-        @TempData["COMPRADO"]
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function mostrarMensajeCompra() {
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                title: "Tu compra se ha realizado",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+        mostrarMensajeCompra();
+    </script>
 }
 <div class="text-center">
     <a class="btn btn-primary"
@@ -35,8 +47,8 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 @{
     string requestparams = "";
-    
-    foreach(BilleteVueloView billete in Model)
+
+    foreach (BilleteVueloView billete in Model)
     {
         requestparams += "idBillete=" + billete.IdBillete + "&";
     }
@@ -45,7 +57,7 @@
 
 <script>
     $(document).ready(function () {
-        
+
         let url = "@requestparams";
         url = url.replaceAll("amp;", "");
         $("#content").load("/Vuelos/BilletesPartial?" + url)

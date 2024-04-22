@@ -19,7 +19,8 @@ builder.Services.AddControllersWithViews(options=>options.EnableEndpointRouting=
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
 builder.Services.AddAntiforgery();
-builder.Services.AddTransient<ISkyAirRepository,SkyAirRepository>();
+builder.Services.AddHttpContextAccessor();
+//builder.Services.AddTransient<ISkyAirRepository,SkyAirRepository>();
 builder.Services.AddTransient<ISkyAirRepository,SkyAirService>();
 string connectionString = builder.Configuration.GetConnectionString("SkyAirSqlServer");
 builder.Services.AddDbContext<SkyAirContext>(options=>options.UseSqlServer(connectionString));

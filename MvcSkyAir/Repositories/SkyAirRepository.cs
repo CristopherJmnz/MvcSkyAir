@@ -372,12 +372,24 @@ namespace MvcSkyAir.Repositories
 
         #region USUARIOS
 
-        public async Task<Usuario> LogInEmpleadoAsync
+        public async Task<Usuario> LogInAsync
             (string email, string password)
         {
             return await this.context.Usuarios
                 .FirstOrDefaultAsync(x => x.Email == email
                 && x.Password == password);
+        }
+
+
+
+        #endregion
+
+
+        #region TOKEN
+
+        public Task<string> GetTokenAsync(string username, string password)
+        {
+            return null;
         }
 
         #endregion

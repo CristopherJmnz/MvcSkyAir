@@ -4,20 +4,21 @@ using System.Net.Http.Headers;
 using System.Text;
 using NugetModelSkyAir.Models;
 using MvcSkyAir.Repositories;
-using Azure.Core;
+using MvcSkyAir.Helpers;
 
 namespace MvcSkyAir.Services
 {
-    public class SkyAirService :ISkyAirRepository
+    public class SkyAirService : ISkyAirRepository
     {
         private string ApiUrl;
         private MediaTypeWithQualityHeaderValue Header;
-        public SkyAirService(IConfiguration config)
+        private IHttpContextAccessor httpContextAccessor;
+        public SkyAirService(IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             this.ApiUrl = config.GetValue<string>("ApiUrls:SkyAirApi");
             this.Header =
                 new MediaTypeWithQualityHeaderValue("application/json");
-
+            this.httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -109,22 +110,26 @@ namespace MvcSkyAir.Services
 
         public async Task<List<string>> GetContinentesNameAsync()
         {
-            return null;
+            string request = "api/Continentes/GetContinentesNames";
+            return await this.CallApiAsync<List<string>>(request);
         }
 
         public async Task<List<Pais>> GetAllPaisesAsync()
         {
-            return null;
+            string request = "api/Paises/GetAllPaises";
+            return await this.CallApiAsync<List<Pais>>(request);
         }
 
         public async Task<Pais> FindPaisByIdAsync(int idPais)
         {
-            return null;
+            string request = "api/Paises/FindPaisById/" + idPais;
+            return await this.CallApiAsync<Pais>(request);
         }
 
         public async Task<List<Pais>> GetPaisesByContinenteAsync(int idContinente)
         {
-            return null;
+            string request = "api/Paises/GetPaisesByContinente";
+            return await this.CallApiAsync<List<Pais>>(request);
         }
 
         public async Task<List<CiudadView>> GetAllCiudadesViewAsync()
@@ -136,7 +141,8 @@ namespace MvcSkyAir.Services
 
         public async Task<List<CiudadView>> GetCiudadesViewByContinenteAsync(int idContinente)
         {
-            return null;
+            string request = "api/CiudadView/GetCiudadesViewByContinente/" + idContinente;
+            return await this.CallApiAsync<List<CiudadView>>(request);
         }
 
         public async Task<CiudadView> FindCiudadViewByIdAsync(int idCiudad)
@@ -148,67 +154,107 @@ namespace MvcSkyAir.Services
 
         public async Task<CiudadView> FindCiudadViewByNameAsync(string nombre)
         {
-            return null;
+            string request = "api/CiudadView/FindCiudadViewByName/" + nombre;
+            return await this.CallApiAsync<CiudadView>(request);
         }
 
         public async Task<List<VueloView>> GetAllVuelosViewAsync()
         {
-            return null;
+            string request = "api/VuelosView/GetAllVuelosView";
+            return await this.CallApiAsync<List<VueloView>>(request);
         }
 
         public async Task<List<VueloView>> GetVuelosViewByContinente(int idContinente)
         {
-            return null;
+            string request = "api/VuelosView/GetVuelosViewByContinente/" + idContinente;
+            return await this.CallApiAsync<List<VueloView>>(request);
         }
 
         public async Task<List<VueloView>> GetVuelosViewByPais(int idPais)
         {
-            return null;
+            string request = "api/VuelosView/GetVuelosViewByPais/" + idPais;
+            return await this.CallApiAsync<List<VueloView>>(request);
         }
 
         public async Task<List<VueloView>> GetVuelosViewByCiudad(int idCiudad)
         {
-            return null;
+            string request = "api/VuelosView/GetVuelosViewByCiudad/" + idCiudad;
+            return await this.CallApiAsync<List<VueloView>>(request);
         }
 
         public async Task<ModelPaginacionVuelosView> GetVuelosPaginacion(int posicion)
         {
-            return null;
+            string request = "api/VuelosView/GetVuelosPaginacion/" + posicion;
+            return await this.CallApiAsync<ModelPaginacionVuelosView>(request);
         }
 
         public async Task<VueloView> FindVueloViewByIdAsync(int idVuelo)
         {
-            return null;
+            string request = "api/VuelosView/FindVueloViewById/" + idVuelo;
+            return await this.CallApiAsync<VueloView>(request);
         }
 
         public async Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, int kids, int adultos)
         {
-            return null;
+            string request = "api/VuelosView/SearchVuelo";
+
+            ModelSearchVuelo model = new ModelSearchVuelo()
+            {
+                Adultos = adultos,
+                Destino = destino,
+                FechaIda = fechaIda,
+                Kids = kids,
+                Origen = origen
+            };
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                StringContent content = this.GetContentModel<ModelSearchVuelo>(model);
+                HttpResponseMessage response =
+                    await client.PostAsync(request, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    List<VueloView> data = await response.Content.ReadAsAsync<List<VueloView>>();
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            
         }
 
         public async Task<List<VueloView>> SearchVueloAsync(string origen, string destino, DateTime fechaIda, DateTime fechaVuelta, int kids, int adultos)
         {
-            return null;
+            string request = "";
+            return await this.CallApiAsync<List<VueloView>>(request);
         }
 
         public async Task<Ciudad> FindCiudadByIdAsync(int idCiudad)
         {
-            return null;
+            string request = "api/Ciudad/FindCiudadById/" + idCiudad;
+            return await this.CallApiAsync<Ciudad>(request);
         }
 
         public async Task<List<Ciudad>> GetAllCiudadesAsync()
         {
-            return null;
+            string request = "api/Ciudad/GetAllCiudades";
+            return await this.CallApiAsync<List<Ciudad>>(request);
         }
 
         public async Task<List<Avion>> GetAvionesAsync()
         {
-            return null;
+            string request = "api/Aviones/GetAviones";
+            return await this.CallApiAsync<List<Avion>>(request);
         }
 
         public async Task CreateAvion(string modelo, int capacidad, int velocidad)
         {
-           
+
         }
 
         public async Task<int> GetMaxAvionIdAsync()
@@ -218,27 +264,91 @@ namespace MvcSkyAir.Services
 
         public async Task CancelarVuelo(int idVuelo)
         {
-            
+            string token =
+                this.httpContextAccessor
+                .HttpContext.User
+                .FindFirst(x => x.Type == "TOKEN").Value;
+            string request = "api/Vuelos/CancelarVuelo/" + idVuelo;
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                client.DefaultRequestHeaders.Add
+                    ("Authorization", "bearer " + token);
+                HttpResponseMessage response =
+                    await client.PutAsync(request, null);
+            }
         }
 
         public async Task CambiarEstadoVuelo(int idVuelo, int idEstado)
         {
-            
+            string token =
+                this.httpContextAccessor
+                .HttpContext.User
+                .FindFirst(x => x.Type == "TOKEN").Value;
+            string request = $"api/Vuelos/CambiarEstadoVuelo/{idVuelo}/{idEstado}";
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                client.DefaultRequestHeaders.Add
+                    ("Authorization", "bearer " + token);
+                HttpResponseMessage response =
+                    await client.PutAsync(request, null);
+            }
         }
 
         public async Task<Vuelo> FindVueloByIdAsync(int idVuelo)
         {
-            return null;
+            string request = $"api/Vuelos/FindVueloById/{idVuelo}";
+            return await this.CallApiAsync<Vuelo>(request);
         }
 
-        public async Task CreateVuelo(int idAvion, int idOrigen, int idDestino, DateTime fechaSalida, decimal precioEstandar, int idEstado)
+        public async Task CreateVuelo(int idAvion, int idOrigen, int idDestino, DateTime fechaSalida,
+            decimal precioEstandar, int idEstado)
         {
-            
+            string request = "api/Vuelos/CreateVuelo";
+            Vuelo vuelo = new Vuelo()
+            {
+                IdAvion = idAvion,
+                IdOrigen = idOrigen,
+                IdDestino = idDestino,
+                FechaSalida = fechaSalida,
+                PrecioEstandar = precioEstandar,
+                IdEstado = idEstado,
+            };
+            string token =
+                this.httpContextAccessor
+                .HttpContext.User
+                .FindFirst(x => x.Type == "TOKEN").Value;
+
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                client.DefaultRequestHeaders.Add
+                    ("Authorization", "bearer " + token);
+                StringContent content = this.GetContentModel<Vuelo>(vuelo);
+                HttpResponseMessage response =
+                    await client.PostAsync(request, content);
+            }
+        }
+
+        private StringContent GetContentModel<T>(T data)
+        {
+            string jsonModel = JsonConvert.SerializeObject(data);
+            StringContent content =
+                new StringContent
+                (jsonModel, Encoding.UTF8, "application/json");
+            return content;
         }
 
         public async Task RestarAsientoAsync(int idVuelo)
         {
-            
+
         }
 
         public async Task<int> GetMaxIdVuelo()
@@ -248,12 +358,14 @@ namespace MvcSkyAir.Services
 
         public async Task<List<EstadoVuelo>> GetEstadosVueloAsync()
         {
-            return null;
+            string request = "api/EstadosVuelo/GetEstadosVuelo";
+            return await this.CallApiAsync<List<EstadoVuelo>>(request);
         }
 
         public async Task<List<TipoClase>> GetClasesAsync()
         {
-            return null;
+            string request = "api/TiposClase/GetTiposClase";
+            return await this.CallApiAsync<List<TipoClase>>(request);
         }
 
         public async Task<int> GetMaxBilleteIdAsync()
@@ -261,34 +373,116 @@ namespace MvcSkyAir.Services
             return 0;
         }
 
-        public async Task<Billete> CreateBilleteAsync(int idVuelo, int equipajeMano, int equipajeCabina, string asiento, decimal precio, string nombre, string documento, string apellido, string email, string telefonoContacto, int idClase)
+        public async Task<Billete> CreateBilleteAsync
+            (int idVuelo, int equipajeMano, int equipajeCabina,
+            string asiento, decimal precio, string nombre, string documento,
+            string apellido, string email, string telefonoContacto, int idClase)
         {
-            return null;
+            string request = "api/Billetes/CreateBillete";
+            Billete billete = new Billete()
+            {
+                IdBillete = 0,
+                DocumentoIdentidad = documento,
+                Nombre = nombre,
+                FechaCompra = DateTime.UtcNow,
+                Precio = precio,
+                IdVuelo = idVuelo,
+                EquipajeMano = equipajeMano,
+                EquipajeCabina = equipajeCabina,
+                Apellido = apellido,
+                Email = email,
+                TelefonoContacto = telefonoContacto,
+                IdClase = idClase,
+                Asiento = asiento,
+            };
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                StringContent content = this.GetContentModel<Billete>(billete);
+                HttpResponseMessage response =
+                    await client.PostAsync(request, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Billete data = await response.Content.ReadAsAsync<Billete>();
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         public async Task<List<string>> GetAsientosBilletesByVuelo(int idVuelo)
         {
-            return null;
+            string request = $"api/Billetes/GetAsientosBillete/{idVuelo}";
+            return await this.CallApiAsync<List<string>>(request);
         }
 
         public async Task<BilleteVueloView> FindBilleteViewByApellidoAndIdVueloAsync(string codVuelo, string apellido)
         {
-            return null;
+            string request = 
+                $"api/BilleteVueloView/FindBilleteByCodigoVueloAndApellido/" +
+                $"{apellido}/{codVuelo}";
+            return await this.CallApiAsync<BilleteVueloView>(request);
         }
 
         public async Task<BilleteVueloView> FindBilleteViewByIdAsync(int idBillete)
         {
-            return null;
+            string request = $"api/BilleteVueloView/FindBilleteView/{idBillete}";
+            return await this.CallApiAsync<BilleteVueloView>(request);
         }
 
         public async Task<List<BilleteVueloView>> GetBilletesViewById(List<int> idBilletes)
         {
-            return null;
+            string queryParams= CollectionToQuery(idBilletes, "idBillete");
+            string request = "api/BilleteVueloView/GetBilletesViewById?"+queryParams;
+            return await this.CallApiAsync<List<BilleteVueloView>>(request);
         }
 
-        public async Task<Usuario> LogInEmpleadoAsync(string email, string password)
+        public async Task<Usuario> LogInAsync(string email, string password)
         {
-            return null;
+            string request = "api/Usuarios/Login";
+            LoginModel model = new LoginModel
+            { UserName = email, Password = password };
+            using (HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(this.ApiUrl);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add
+                    (new MediaTypeWithQualityHeaderValue("application/json"));
+                //CONVERTIMOS NUESTRO MODEL A JSON
+                
+                StringContent content = GetContentModel<LoginModel>(model);
+                    
+                HttpResponseMessage response = await
+                    client.PostAsync(request, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Usuario data = await
+                        response.Content.ReadAsAsync<Usuario>();
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+        }
+
+
+        private string CollectionToQuery(List<int>data,string name)
+        {
+            string result = "";
+            foreach (var item in data)
+            {
+                result += name + "=" + item + "&";
+            }
+            result = result.TrimEnd('&');
+            return result;
         }
     }
 }

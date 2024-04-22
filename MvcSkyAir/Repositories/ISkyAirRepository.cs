@@ -4,6 +4,13 @@ namespace MvcSkyAir.Repositories
 {
     public interface ISkyAirRepository
     {
+        #region TOKEN
+
+        Task<string> GetTokenAsync(string username
+            , string password);
+
+        #endregion
+
         #region CONTINENTES
         Task<List<Continente>> GetAllContinentesAsync();
         Task<List<string>> GetContinentesNameAsync();
@@ -107,7 +114,7 @@ namespace MvcSkyAir.Repositories
 
         #region USUARIOS
 
-        Task<Usuario> LogInEmpleadoAsync(string email, string password);
+        Task<Usuario> LogInAsync(string email, string password);
 
         #endregion
     }
