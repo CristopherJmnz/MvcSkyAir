@@ -6,6 +6,7 @@ using DinkToPdf;
 using Microsoft.AspNetCore.Http.Extensions;
 using System;
 using Rotativa.AspNetCore;
+using MvcSkyAir.Services;
 
 
 namespace MvcSkyAir.Controllers
@@ -13,8 +14,10 @@ namespace MvcSkyAir.Controllers
     public class VuelosController : Controller
     {
         private ISkyAirRepository service;
-        public VuelosController(ISkyAirRepository service)
+        private LogicAppService logicAppService;
+        public VuelosController(ISkyAirRepository service, LogicAppService logicAppService)
         {
+            this.logicAppService = logicAppService;
             this.service = service;
         }
         public IActionResult Vuelos()
@@ -136,6 +139,7 @@ namespace MvcSkyAir.Controllers
         {
             List<BilleteVueloView> billetes = await this.service.GetBilletesViewById(idBillete);
             string nombrePDF = "Billete_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".pdf";
+            this.logicAppService.CreatePdf("hacer la url https://api.com?idBillete=2&idBillete=3");
             return new ViewAsPdf("BilleteToPdf", billetes)
             {
                 FileName = nombrePDF,
