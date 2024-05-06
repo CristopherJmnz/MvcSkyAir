@@ -22,7 +22,7 @@
 
 </head>
 
-<body>
+<body class="position-relative">
 
     <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -145,18 +145,37 @@
     </div>
     <!-- Copyright End -->
     <!-- Back to Top -->
-    <a href="#" class="btn btn-primary btn-primary-outline-0 btn-md-square back-to-top"><i class="fa fa-arrow-up"></i></a>
-
+    <a href="#" class="btn btn-primary btn-primary-outline-0 btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+    
+    
+    <a id="btn-bot" class="btn btn-primary btn-lg-square">
+        <i class="fa-solid fa-robot"></i>
+    </a>
+    <iframe id="bot-window" 
+        src="https://copilotstudio.microsoft.com/environments/Default-68519e48-83f3-435f-a38a-1a7aa77ba987/bots/cr899_skyAirBot/webchat?__version__=2"
+            frameborder="0"
+    class="shadow"></iframe>
 
     <!-- JavaScript Libraries -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        let abierto = false;
+        $(document).ready(function () {
+            $("#btn-bot").click(function(){
+                if(!abierto){
+                    $("#bot-window").show();
+                }else{
+                    $("#bot-window").hide();
+                }
+                abierto = !abierto;
+            })
+        });
+    </script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/waypoints/waypoints.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/lightbox/js/lightbox.min.js"></script>
-
-
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="~/lib/lightbox/js/lightbox.min.js"></script>
     <!-- Template Javascript -->
     <script src="~/js/main.js"></script>
     @RenderSection("Scripts", required: false)

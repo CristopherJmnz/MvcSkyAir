@@ -7,10 +7,10 @@ namespace MvcSkyAir.Controllers
 {
     public class UsuariosController : Controller
     {
-        private ISkyAirRepository repo;
-        public UsuariosController(ISkyAirRepository repo)
+        private ISkyAirRepository service;
+        public UsuariosController(ISkyAirRepository service)
         {
-            this.repo = repo;
+            this.service = service;
         }
         [AuthorizeUsers]
         public IActionResult Perfil()
@@ -21,7 +21,7 @@ namespace MvcSkyAir.Controllers
         [AuthorizeUsers]
         public async Task<IActionResult> DataVuelos()
         {
-            List<VueloView> vuelos = await this.repo.GetAllVuelosViewAsync();
+            List<VueloView> vuelos = await this.service.GetAllVuelosViewAsync();
             return View(vuelos);
         }
 
@@ -31,7 +31,7 @@ namespace MvcSkyAir.Controllers
             {
                 posicion = 1;
             }
-            ModelPaginacionVuelosView model = await this.repo.GetVuelosPaginacion(posicion.Value);
+            ModelPaginacionVuelosView model = await this.service.GetVuelosPaginacion(posicion.Value);
             int siguiente = posicion.Value + 1;
             if (siguiente > model.NumeroRegistros)
             {
@@ -52,32 +52,32 @@ namespace MvcSkyAir.Controllers
 
         public async Task<IActionResult> CreateVuelo()
         {
-            List<CiudadView> ciudades=await this.repo.GetAllCiudadesViewAsync();
+            List<CiudadView> ciudades=await this.service.GetAllCiudadesViewAsync();
             return View(ciudades);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateVuelo(Vuelo vuelo)
         {
-            await this.repo.CreateVuelo(vuelo.IdAvion,vuelo.IdOrigen,vuelo.IdDestino,vuelo.FechaSalida,vuelo.PrecioEstandar,1);
+            await this.service.CreateVuelo(vuelo.IdAvion,vuelo.IdOrigen,vuelo.IdDestino,vuelo.FechaSalida,vuelo.PrecioEstandar,1);
             return RedirectToAction("DataVuelos");
         }
 
         public async Task<IActionResult> CancelVuelo(int idVuelo)
         {
-            await this.repo.CancelarVuelo(idVuelo);
+            await this.service.CancelarVuelo(idVuelo);
             return RedirectToAction("DataVuelos");
         }
 
         [HttpPost]
         public async Task<IActionResult> CambiarEstadoVuelo(int idVuelo,int idestado)
         {
-            await this.repo.CambiarEstadoVuelo(idVuelo,idestado);
+            await this.service.CambiarEstadoVuelo(idVuelo,idestado);
             return RedirectToAction("DataVuelos");
         }
         public async Task<IActionResult> Flota()
         {
-            List<Avion>aviones=await this.repo.GetAvionesAsync();
+            List<Avion>aviones=await this.service.GetAvionesAsync();
             return View(aviones);
         }
 
@@ -88,7 +88,7 @@ namespace MvcSkyAir.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAvion(Avion avion)
         {
-            await this.repo.CreateAvion(avion.Modelo,avion.Capacidad,avion.Velocidad);
+            await this.service.CreateAvion(avion.Modelo,avion.Capacidad,avion.Velocidad);
             return RedirectToAction("Flota");
         }
 

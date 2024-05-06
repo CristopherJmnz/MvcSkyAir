@@ -1,29 +1,16 @@
-using DinkToPdf.Contracts;
-using DinkToPdf;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
-using MvcSkyAir.Data;
-using MvcSkyAir.Extensions;
 using MvcSkyAir.Repositories;
 using MvcSkyAir.Services;
+using MvcSkyAir.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
-
-//PDF LIB
-var context = new CustomAssemblyLoadContext();
-context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "PdfLibrarie/libwkhtmltox.dll"));
-builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
-
-
 builder.Services.AddControllersWithViews(options=>options.EnableEndpointRouting=false);
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddMemoryCache();
-builder.Services.AddAntiforgery();
+//builder.Services.AddAntiforgery();
 builder.Services.AddHttpContextAccessor();
-//builder.Services.AddTransient<ISkyAirRepository,SkyAirRepository>();
 builder.Services.AddTransient<ISkyAirRepository,SkyAirService>();
-string connectionString = builder.Configuration.GetConnectionString("SkyAirSqlServer");
-builder.Services.AddDbContext<SkyAirContext>(options=>options.UseSqlServer(connectionString));
+builder.Services.AddSingleton<HelperPathProvider>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -55,5 +42,9 @@ app.UseMvc(routes =>
         name: "default",
         template: "{controller=Home}/{action=Index}/{id?}");
 });
+
+IWebHostEnvironment env = app.Environment;
+Rotativa.AspNetCore.RotativaConfiguration.Setup(env.WebRootPath, "../Rotativa/Windows");
+
 
 app.Run();
